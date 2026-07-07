@@ -1,0 +1,24 @@
+{
+  "name": "codesimplr-website",
+  "version": "1.0.0",
+  "description": "CodeSimplr website - Advanced AI infrastructure, elite brand design, and career acceleration",
+  "main": "script.js",
+  "scripts": {
+    "dev": "npx serve .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jindalsparsh/codesimplr-website.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jindalsparsh/codesimplr-website/issues"
+  },
+  "homepage": "https://github.com/jindalsparsh/codesimplr-website#readme",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
+}
