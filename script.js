@@ -4,6 +4,38 @@
    ============================================================ */
 
 document.addEventListener('DOMContentLoaded', () => {
+  const DEFAULT_WHATSAPP_NUMBER = '919555163525';
+
+  const openWhatsapp = (message, phoneNumber = DEFAULT_WHATSAPP_NUMBER) => {
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    const opened = window.open(url, '_blank');
+
+    if (opened) {
+      opened.opener = null;
+    } else {
+      window.location.href = url;
+    }
+  };
+
+  const saveSignup = (payload) => {
+    if (window.location.protocol === 'file:') return Promise.resolve(false);
+
+    return fetch('/api/signups', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      keepalive: true,
+      body: JSON.stringify({
+        ...payload,
+        pageUrl: window.location.href,
+        referrer: document.referrer || '',
+      }),
+    })
+      .then((response) => response.ok)
+      .catch(() => {
+        // Keep WhatsApp as the fallback path if storage is not configured yet.
+        return false;
+      });
+  };
 
   /* ----------------------------------------------------------
      1. SCROLL-REVEAL ANIMATION SYSTEM
@@ -264,10 +296,53 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
       if (!validateStep(currentStep)) return;
 
-      // Show success step
+      const selectedInterests = Array.from(
+        form.querySelectorAll('.interest-chip.selected')
+      ).map((chip) => chip.textContent.trim().replace(/\s+/g, ' '));
+
+      const name = form.querySelector('#contactName')?.value.trim();
+      const email = form.querySelector('#contactEmail')?.value.trim();
+      const company = form.querySelector('#contactCompany')?.value.trim();
+      const message = form.querySelector('#contactMessage')?.value.trim();
+      const website = form.querySelector('[name="website"]')?.value.trim();
+      const whatsappMessage = [
+        'Hi CodeSimplr! I would like to start a project.',
+        selectedInterests.length ? `Interests: ${selectedInterests.join(', ')}` : '',
+        name ? `Name: ${name}` : '',
+        email ? `Email: ${email}` : '',
+        company ? `Company: ${company}` : '',
+        message ? `Project details: ${message}` : '',
+      ].filter(Boolean).join('\n');
+
+      const savePromise = saveSignup({
+        source: 'contact',
+        name,
+        email,
+        company,
+        interests: selectedInterests,
+        message,
+        website,
+      });
+
+      openWhatsapp(
+        whatsappMessage,
+        form.dataset.whatsappNumber || DEFAULT_WHATSAPP_NUMBER
+      );
+
       showStep(steps.length - 1);
       const successStep = steps[steps.length - 1];
       if (successStep) successStep.classList.add('confetti');
+      const successText = successStep?.querySelector('.success-text');
+      if (successText) {
+        successText.textContent = 'Saving your project details. WhatsApp also opened so you can continue the conversation instantly.';
+      }
+
+      savePromise.then((saved) => {
+        if (!successText) return;
+        successText.textContent = saved
+          ? 'Your project details were saved to CodeSimplr. WhatsApp also opened so you can continue the conversation instantly.'
+          : 'WhatsApp opened with your project details. Signup storage will start saving records once the Vercel database is connected.';
+      });
 
       // Reset after 3 seconds
       setTimeout(() => {
@@ -305,9 +380,28 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Show inline success
+      const savePromise = saveSignup({
+        source: 'newsletter',
+        email,
+        website: form.querySelector('[name="website"]')?.value.trim(),
+      });
+
+      openWhatsapp(
+        `Hi CodeSimplr! Please subscribe ${email} to the CodeSimplr Report.`
+      );
+
       if (successEl) successEl.style.display = 'block';
+      if (successEl) {
+        successEl.textContent = 'Saving your email. WhatsApp opened as a direct follow-up channel.';
+      }
       form.style.display = 'none';
+
+      savePromise.then((saved) => {
+        if (!successEl) return;
+        successEl.textContent = saved
+          ? 'Thanks, your email was saved to the CodeSimplr signup database.'
+          : 'WhatsApp opened with your subscription request. Signup storage will start saving records once the Vercel database is connected.';
+      });
 
       // Restore form after a few seconds
       setTimeout(() => {
