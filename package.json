@@ -1,0 +1,21 @@
+{
+  "name": "codesimplr-website",
+  "version": "1.0.0",
+  "description": "CodeSimplr — Simplify. Build. Scale.",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python3 -m http.server 8000",
+    "build": "echo 'Static site - no build required'",
+    "lint": "echo 'No linter configured'"
+  },
+  "keywords": [
+    "ai",
+    "automation",
+    "web-development"
+  ],
+  "author": "CodeSimplr",
+  "license": "MIT",
+  "dependencies": {
+    "@vercel/speed-insights": "^1.1.0"
+  }
+}
