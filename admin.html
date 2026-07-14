@@ -78,10 +78,11 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Interest</th>
+                                    <th>Offer</th>
                                 </tr>
                             </thead>
                             <tbody id="signupRows">
-                                <tr><td colspan="5">Load the dashboard to see signups.</td></tr>
+                                <tr><td colspan="6">Load the dashboard to see signups.</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -168,7 +169,7 @@
       const renderSignups = (rows) => {
         const target = document.getElementById('signupRows');
         if (!rows?.length) {
-          target.innerHTML = '<tr><td colspan="5">No signups yet.</td></tr>';
+          target.innerHTML = '<tr><td colspan="6">No signups yet.</td></tr>';
           return;
         }
 
@@ -179,6 +180,7 @@
             <td>${escapeHtml(row.name || '-')}</td>
             <td>${escapeHtml(row.email)}</td>
             <td>${escapeHtml(Array.isArray(row.interests) ? row.interests.join(', ') : '-')}</td>
+            <td>${escapeHtml(row.offer || row.funnel_stage || '-')}</td>
           </tr>
         `).join('');
       };

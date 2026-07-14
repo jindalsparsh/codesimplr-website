@@ -1,0 +1,31 @@
+# CodeSimplr
+
+CodeSimplr builds AI automation, workflow automation, conversion-focused websites, SEO growth systems, and career acceleration services for businesses and professionals across the USA, UK, Canada, UAE, India, and remote international markets.
+
+## Primary Offers
+
+- Free Growth & Automation Audit: review of funnel clarity, AI automation opportunities, SEO visibility, and lead capture.
+- AI Automation Agency: AI agents, lead follow-up automation, support automation, recruiter workflows, and reporting systems.
+- Website Design & SEO: service pages, country pages, lead forms, blog structure, structured data, and analytics.
+- n8n Workflow Automation: forms, webhooks, CRM updates, spreadsheets, email, WhatsApp, reporting, and AI workflow steps.
+
+## Key Pages
+
+- Homepage: https://codesimplr.com/
+- Free audit contact page: https://codesimplr.com/contact
+- AI automation agency: https://codesimplr.com/ai-automation-agency
+- Website design and SEO: https://codesimplr.com/website-design-seo
+- n8n workflow automation: https://codesimplr.com/n8n-workflow-automation
+- Blog: https://codesimplr.com/blog
+- USA services: https://codesimplr.com/usa
+- UK services: https://codesimplr.com/uk
+- Canada services: https://codesimplr.com/canada
+
+## Backend And Analytics
+
+Lead submissions are designed to be stored in a Neon Postgres table named `website_signups` when the Vercel project has `DATABASE_URL` and `SIGNUPS_ADMIN_TOKEN` configured. Website events are designed to be stored in `website_events`.
+
+## Contact
+
+- Website: https://codesimplr.com/contact
+- WhatsApp: https://wa.me/919555163525

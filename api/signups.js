@@ -56,12 +56,17 @@ const ensureTable = async (sql) => {
       name TEXT,
       company TEXT,
       interests JSONB NOT NULL DEFAULT '[]'::jsonb,
+      offer TEXT,
+      funnel_stage TEXT,
       message TEXT,
       page_url TEXT,
       referrer TEXT,
       user_agent TEXT
     )
   `;
+
+  await sql`ALTER TABLE website_signups ADD COLUMN IF NOT EXISTS offer TEXT`;
+  await sql`ALTER TABLE website_signups ADD COLUMN IF NOT EXISTS funnel_stage TEXT`;
 
   await sql`
     CREATE INDEX IF NOT EXISTS website_signups_created_at_idx
@@ -91,6 +96,8 @@ const toCsv = (rows) => {
     'name',
     'company',
     'interests',
+    'offer',
+    'funnel_stage',
     'message',
     'page_url',
     'referrer',
@@ -131,6 +138,8 @@ async function handleRequest(request) {
         name: cleanText(payload.name, 160),
         company: cleanText(payload.company, 200),
         interests: cleanInterests(payload.interests),
+        offer: cleanText(payload.offer, 160),
+        funnelStage: cleanText(payload.funnelStage, 120),
         message: cleanText(payload.message, 2000),
         pageUrl: cleanText(payload.pageUrl, 600),
         referrer: cleanText(payload.referrer, 600),
@@ -147,6 +156,8 @@ async function handleRequest(request) {
           name,
           company,
           interests,
+          offer,
+          funnel_stage,
           message,
           page_url,
           referrer,
@@ -158,6 +169,8 @@ async function handleRequest(request) {
           ${signup.name},
           ${signup.company},
           ${JSON.stringify(signup.interests)}::jsonb,
+          ${signup.offer},
+          ${signup.funnelStage},
           ${signup.message},
           ${signup.pageUrl},
           ${signup.referrer},
@@ -192,6 +205,8 @@ async function handleRequest(request) {
           name,
           company,
           interests,
+          offer,
+          funnel_stage,
           message,
           page_url,
           referrer,

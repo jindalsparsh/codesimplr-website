@@ -731,6 +731,95 @@ input, textarea, select {
 /* ————————————————————————————————————————————————————————————
    7. SERVICES SECTION
    ———————————————————————————————————————————————————————————— */
+/* Funnel Section */
+.funnel-section {
+  padding: var(--section-pad-y) 0;
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(56, 189, 248, 0.07), transparent 36%),
+    radial-gradient(ellipse at 80% 20%, rgba(196, 216, 46, 0.07), transparent 38%),
+    var(--clr-bg-primary);
+}
+
+.funnel-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.1rem;
+}
+
+.funnel-card {
+  position: relative;
+  min-height: 270px;
+  padding: 1.5rem;
+  overflow: hidden;
+  transition: transform var(--transition-base),
+              border-color var(--transition-base),
+              box-shadow var(--transition-base);
+}
+
+.funnel-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(196, 216, 46, 0.28);
+  box-shadow: var(--shadow-glow-lime);
+}
+
+.funnel-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 1.1rem;
+  border-radius: 50%;
+  border: 1px solid rgba(196, 216, 46, 0.34);
+  color: var(--clr-lime);
+  font-weight: 700;
+  background: rgba(196, 216, 46, 0.08);
+}
+
+.funnel-card h3,
+.faq-item h3,
+.audit-benefit strong {
+  color: var(--clr-white);
+}
+
+.funnel-card h3 {
+  margin-bottom: 0.65rem;
+  font-size: 1.15rem;
+}
+
+.funnel-card p,
+.funnel-offer p,
+.faq-item p,
+.audit-benefit p {
+  color: var(--clr-text-secondary);
+  line-height: 1.75;
+}
+
+.funnel-link {
+  display: inline-flex;
+  margin-top: 1rem;
+  color: var(--clr-lime);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.funnel-offer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1.5rem;
+  align-items: center;
+  margin-top: 1.5rem;
+  padding: 1.75rem;
+  background:
+    linear-gradient(135deg, rgba(196, 216, 46, 0.08), rgba(56, 189, 248, 0.06)),
+    var(--glass-bg);
+}
+
+.funnel-offer h3 {
+  margin: 0.8rem 0 0.6rem;
+  font-size: clamp(1.45rem, 2.8vw, 2.2rem);
+}
+
 .services-section {
   position: relative;
   padding: var(--section-pad-y) 0;
@@ -1979,6 +2068,115 @@ input, textarea, select {
   padding: 2rem;
 }
 
+.audit-benefits {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.audit-benefit {
+  padding: 1.25rem;
+}
+
+.audit-benefit strong {
+  display: block;
+  margin-bottom: 0.55rem;
+}
+
+.audit-benefit p {
+  font-size: 0.9rem;
+}
+
+.faq-section {
+  padding: var(--section-pad-y) 0;
+  background: var(--clr-bg-secondary);
+}
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.faq-item {
+  padding: 1.5rem;
+}
+
+.faq-item h3 {
+  margin-bottom: 0.7rem;
+  font-size: 1.08rem;
+}
+
+.landing-shell {
+  width: min(1120px, 100%);
+}
+
+.landing-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
+  gap: 2rem;
+  align-items: center;
+}
+
+.landing-proof {
+  padding: 1.5rem;
+}
+
+.landing-proof h2 {
+  margin-bottom: 0.7rem;
+  font-size: 1.2rem;
+}
+
+.landing-proof ul,
+.landing-section ul {
+  display: grid;
+  gap: 0.7rem;
+  margin: 0.85rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.landing-proof li,
+.landing-section li {
+  color: var(--clr-text-secondary);
+  line-height: 1.7;
+}
+
+.landing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.landing-card,
+.landing-section {
+  padding: 1.5rem;
+}
+
+.landing-card h2,
+.landing-section h2 {
+  margin-bottom: 0.7rem;
+  font-size: 1.18rem;
+}
+
+.landing-card p,
+.landing-section p {
+  color: var(--clr-text-secondary);
+  line-height: 1.75;
+}
+
+.landing-section {
+  margin-top: 1rem;
+}
+
+.landing-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
 .blog-shell {
   width: min(1120px, 100%);
 }
@@ -2329,10 +2527,18 @@ input, textarea, select {
   }
 
   .growth-panel-grid,
+  .funnel-grid,
   .hero-proof-strip,
   .project-grid,
+  .audit-benefits,
+  .landing-grid,
   .admin-metrics {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .funnel-offer,
+  .landing-hero {
+    grid-template-columns: 1fr;
   }
 
   .admin-grid {
@@ -2399,15 +2605,27 @@ input, textarea, select {
 
   .hero-proof-strip,
   .growth-panel-grid,
+  .funnel-grid,
+  .faq-grid,
+  .audit-benefits,
+  .landing-grid,
   .project-grid,
   .admin-metrics {
     grid-template-columns: 1fr;
   }
 
   .growth-panel,
+  .funnel-offer,
   .project-feature,
+  .landing-proof,
+  .landing-card,
+  .landing-section,
   .project-card {
     padding: 1.4rem;
+  }
+
+  .funnel-offer {
+    justify-items: start;
   }
 
   .stat-item {

@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS website_signups (
   name TEXT,
   company TEXT,
   interests JSONB NOT NULL DEFAULT '[]'::jsonb,
+  offer TEXT,
+  funnel_stage TEXT,
   message TEXT,
   page_url TEXT,
   referrer TEXT,

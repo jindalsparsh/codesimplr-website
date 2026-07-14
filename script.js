@@ -292,7 +292,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextBtns = form.querySelectorAll('.form-next');
     const prevBtns = form.querySelectorAll('.form-prev');
     const chips = form.querySelectorAll('.interest-chip');
+    const pageParams = new URLSearchParams(window.location.search);
+    const offerInput = form.querySelector('[name="offer"]');
+    const funnelStageInput = form.querySelector('[name="funnelStage"]');
     let currentStep = 0;
+
+    const offerFromUrl = pageParams.get('offer');
+    const stageFromUrl = pageParams.get('stage');
+    if (offerFromUrl && offerInput) offerInput.value = offerFromUrl;
+    if (stageFromUrl && funnelStageInput) funnelStageInput.value = stageFromUrl;
 
     /* — helpers — */
     const showStep = (index) => {
@@ -352,6 +360,26 @@ document.addEventListener('DOMContentLoaded', () => {
       chip.addEventListener('click', () => chip.classList.toggle('selected'));
     });
 
+    const offerInterestDefaults = {
+      'free-growth-audit': ['seo', 'branding', 'ai'],
+      'ai-automation-audit': ['ai'],
+      'website-seo-audit': ['branding', 'seo'],
+      'n8n-automation-audit': ['ai'],
+    };
+    const interestParam = pageParams.get('interest');
+    const defaultInterests = new Set([
+      ...(interestParam ? interestParam.split(',') : []),
+      ...(offerInterestDefaults[offerInput?.value] || []),
+    ].map((item) => item.trim()).filter(Boolean));
+
+    if (defaultInterests.size) {
+      chips.forEach((chip) => {
+        if (defaultInterests.has(chip.dataset.interest)) {
+          chip.classList.add('selected');
+        }
+      });
+    }
+
     /* — step navigation — */
     nextBtns.forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -381,8 +409,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const company = form.querySelector('#contactCompany')?.value.trim();
       const message = form.querySelector('#contactMessage')?.value.trim();
       const website = form.querySelector('[name="website"]')?.value.trim();
+      const offer = offerInput?.value.trim();
+      const funnelStage = funnelStageInput?.value.trim();
       const whatsappMessage = [
         'Hi CodeSimplr! I would like to start a project.',
+        offer ? `Offer: ${offer}` : '',
         selectedInterests.length ? `Interests: ${selectedInterests.join(', ')}` : '',
         name ? `Name: ${name}` : '',
         email ? `Email: ${email}` : '',
@@ -396,12 +427,16 @@ document.addEventListener('DOMContentLoaded', () => {
         email,
         company,
         interests: selectedInterests,
+        offer,
+        funnelStage,
         message,
         website,
       });
 
       trackEvent('form_submit', {
         source: 'contact',
+        offer: offer || '',
+        funnelStage: funnelStage || '',
         interests: selectedInterests.join(', '),
       });
 

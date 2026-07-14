@@ -74,6 +74,46 @@
       }
     }
     </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What happens after I request the free CodeSimplr audit?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "CodeSimplr reviews your website, offer, workflow, or SEO goal and replies with a focused plan for funnel clarity, automation opportunities, search visibility, and lead capture."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does CodeSimplr build AI automation and websites together?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. CodeSimplr combines AI agents, n8n workflows, websites, SEO pages, lead forms, and first-party analytics so the marketing funnel and operations system work together."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can CodeSimplr help businesses in the USA, UK, and Canada?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. CodeSimplr serves businesses and professionals across the United States, United Kingdom, Canada, UAE, India, and remote international markets."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Where are CodeSimplr website leads stored?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "When Vercel environment variables and Neon Postgres are connected, contact and newsletter submissions are saved in the website_signups table and can be viewed through the admin dashboard."
+          }
+        }
+      ]
+    }
+    </script>
 </head>
 <body>
 
@@ -88,6 +128,7 @@
 
             <ul class="nav-links" id="navLinks">
                 <li><a href="#services" class="nav-link">Services</a></li>
+                <li><a href="#funnel" class="nav-link">Funnel</a></li>
                 <li><a href="#tech-stack" class="nav-link">Tech Stack</a></li>
                 <li><a href="#process" class="nav-link">Process</a></li>
                 <li><a href="#projects" class="nav-link">Projects</a></li>
@@ -97,7 +138,7 @@
                 <li><a href="contact.html" class="nav-link">Contact</a></li>
             </ul>
 
-            <a href="contact.html" class="nav-cta btn btn-primary-sm">Contact Us</a>
+            <a href="contact.html?offer=free-growth-audit" class="nav-cta btn btn-primary-sm" data-track="nav_free_audit">Free Audit</a>
 
             <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
                 <span class="hamburger-line"></span>
@@ -139,15 +180,15 @@
             </p>
 
             <div class="hero-ctas reveal reveal-delay-3">
-                <a href="contact.html" class="btn btn-primary" data-track="hero_contact">
-                    <span>Get a Growth Plan</span>
+                <a href="contact.html?offer=free-growth-audit" class="btn btn-primary" data-track="hero_free_audit">
+                    <span>Request Free Audit</span>
                     <svg class="btn-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                         <polyline points="12 5 19 12 12 19"></polyline>
                     </svg>
                 </a>
-                <a href="#projects" class="btn btn-secondary" data-track="hero_projects">
-                    <span>See Project Proof</span>
+                <a href="#funnel" class="btn btn-secondary" data-track="hero_funnel">
+                    <span>View the Funnel</span>
                 </a>
             </div>
 
@@ -158,7 +199,7 @@
                 </div>
                 <div class="stat-item glass">
                     <span class="stat-number counter" data-target="3">0</span><span class="stat-suffix">x</span>
-                    <span class="stat-label">Conversion-Focused Offers</span>
+                    <span class="stat-label">Funnel Stages Defined</span>
                 </div>
                 <div class="stat-item glass">
                     <span class="stat-number counter" data-target="5">0</span><span class="stat-suffix">+</span>
@@ -187,22 +228,75 @@
             <div class="growth-panel glass reveal">
                 <div>
                     <span class="section-tag">What You Get</span>
-                    <h2>One website that sells, tracks, and proves your work.</h2>
+                    <h2>One website that attracts, converts, and tracks real enquiries.</h2>
                 </div>
                 <div class="growth-panel-grid">
                     <div>
                         <strong>Attract</strong>
-                        <p>SEO-focused pages, market-specific copy, and useful blog content for buyers searching in the USA, UK, Canada, UAE, and India.</p>
+                        <p>SEO-focused pages, market-specific copy, blog content, and AI-readable service pages for buyers in the USA, UK, Canada, UAE, and India.</p>
                     </div>
                     <div>
                         <strong>Convert</strong>
-                        <p>Clear contact paths, project-led trust signals, WhatsApp fallback, and Vercel-backed lead capture.</p>
+                        <p>A free audit offer, project-led trust signals, WhatsApp fallback, and Vercel-backed lead capture.</p>
                     </div>
                     <div>
                         <strong>Improve</strong>
-                        <p>First-party traffic events, signup exports, and a simple admin page to see what is working.</p>
+                        <p>First-party traffic events, signup exports, offer attribution, and a simple admin page to see what is working.</p>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="funnel" class="funnel-section">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">Marketing Funnel</span>
+                <h2 class="section-title">
+                    A clear path from search visit to <span class="gradient-text">signed-up lead</span>
+                </h2>
+                <p class="section-subtitle">
+                    The site is structured so a buyer can discover CodeSimplr, understand the offer, trust the proof, and request a free audit without guessing where to click.
+                </p>
+            </div>
+
+            <div class="funnel-grid">
+                <article class="funnel-card glass reveal">
+                    <span class="funnel-step">01</span>
+                    <h3>Attract</h3>
+                    <p>Service pages, country pages, and blog posts target search intent around AI automation, website design, SEO, and n8n workflow automation.</p>
+                    <a href="website-design-seo.html" class="funnel-link" data-track="funnel_website_seo">Website & SEO page</a>
+                </article>
+
+                <article class="funnel-card glass reveal reveal-delay-1">
+                    <span class="funnel-step">02</span>
+                    <h3>Educate</h3>
+                    <p>Project proof and practical content explain what you build, why it matters, and how it improves sales, operations, or hiring workflows.</p>
+                    <a href="blog.html" class="funnel-link" data-track="funnel_blog">Read the blog</a>
+                </article>
+
+                <article class="funnel-card glass reveal reveal-delay-2">
+                    <span class="funnel-step">03</span>
+                    <h3>Convert</h3>
+                    <p>The free audit gives visitors a low-friction reason to share their details and start a qualified conversation.</p>
+                    <a href="contact.html?offer=free-growth-audit&stage=conversion" class="funnel-link" data-track="funnel_free_audit">Request the audit</a>
+                </article>
+
+                <article class="funnel-card glass reveal reveal-delay-3">
+                    <span class="funnel-step">04</span>
+                    <h3>Follow up</h3>
+                    <p>Each lead is saved with source, interests, offer, and page URL so follow-up can be tied to the exact service the visitor wanted.</p>
+                    <a href="contact.html?offer=free-growth-audit&stage=follow-up" class="funnel-link" data-track="funnel_lead_tracking">Plan lead tracking</a>
+                </article>
+            </div>
+
+            <div class="funnel-offer glass reveal">
+                <div>
+                    <span class="project-kicker">Primary Offer</span>
+                    <h3>Free Growth & Automation Audit</h3>
+                    <p>Visitors get a clear promise: we review their funnel, AI automation opportunities, SEO visibility, and lead capture setup, then reply with the next practical steps.</p>
+                </div>
+                <a href="contact.html?offer=free-growth-audit&stage=conversion" class="btn btn-primary" data-track="funnel_offer_cta">Get the Free Audit</a>
             </div>
         </div>
     </section>
@@ -265,6 +359,7 @@
                             <span class="tag">Hermes</span>
                             <span class="tag">LLMs</span>
                         </div>
+                        <a href="ai-automation-agency.html" class="project-card-link" data-track="service_ai_page">AI automation details</a>
                     </div>
 
                     <div class="bento-card glass reveal reveal-delay-1">
@@ -312,6 +407,7 @@
                             <span class="tag">Zapier</span>
                             <span class="tag">Automation</span>
                         </div>
+                        <a href="n8n-workflow-automation.html" class="project-card-link" data-track="service_n8n_page">n8n automation details</a>
                     </div>
 
                     <div class="bento-card glass reveal reveal-delay-2">
@@ -366,6 +462,7 @@
                             <span class="tag">Next.js</span>
                             <span class="tag">UI/UX</span>
                         </div>
+                        <a href="website-design-seo.html" class="project-card-link" data-track="service_website_page">Website funnel details</a>
                     </div>
 
                     <div class="bento-card glass reveal reveal-delay-1">
@@ -381,6 +478,7 @@
                             <span class="tag">Technical SEO</span>
                             <span class="tag">Analytics</span>
                         </div>
+                        <a href="website-design-seo.html" class="project-card-link" data-track="service_seo_page">SEO service details</a>
                     </div>
 
                     <div class="bento-card glass reveal reveal-delay-2">
@@ -667,7 +765,7 @@
                     </div>
                     <div class="project-actions">
                         <a href="https://github.com/jindalsparsh/AI-Resume-Screening-Using-N8N" target="_blank" rel="noopener noreferrer" class="btn btn-primary-sm" data-track="project_resume_screening">View on GitHub</a>
-                        <a href="contact.html" class="project-text-link" data-track="project_contact">Build something like this</a>
+                        <a href="contact.html?offer=ai-automation-audit&stage=proof" class="project-text-link" data-track="project_contact">Build something like this</a>
                     </div>
                 </div>
                 <div class="project-terminal" aria-label="AI resume screening workflow preview">
@@ -748,7 +846,7 @@
                     <span class="project-type">Your Project</span>
                     <h3>Need this level of execution for your business?</h3>
                     <p>Bring a messy workflow, slow website, or unclear marketing funnel. CodeSimplr can turn it into a tracked growth system.</p>
-                    <a href="contact.html" class="btn btn-secondary" data-track="project_cta">Start a project</a>
+                    <a href="contact.html?offer=free-growth-audit&stage=proof" class="btn btn-secondary" data-track="project_cta">Start a project</a>
                 </article>
             </div>
         </div>
@@ -927,9 +1025,9 @@
 
             <div class="reviews-cta reveal">
                 <p class="reviews-cta-text">Ready to become our next success story?</p>
-                <a href="contact.html" class="btn btn-primary">
+                <a href="contact.html?offer=free-growth-audit&stage=conversion" class="btn btn-primary" data-track="reviews_free_audit">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                    <span>Contact Us</span>
+                    <span>Request Free Audit</span>
                     <svg class="btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                         <polyline points="12 5 19 12 12 19"></polyline>
@@ -940,6 +1038,42 @@
     </section>
 
     <!-- ═══════════════════════════════════════════════════════════ -->
+    <section class="faq-section">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">Buyer Questions</span>
+                <h2 class="section-title">
+                    Answers that help visitors <span class="gradient-text">take the next step</span>
+                </h2>
+                <p class="section-subtitle">
+                    Short, specific answers make the offer easier for humans, Google, and AI search systems to understand.
+                </p>
+            </div>
+
+            <div class="faq-grid">
+                <article class="faq-item glass reveal">
+                    <h3>What happens after I request the free audit?</h3>
+                    <p>CodeSimplr reviews your website, offer, workflow, or SEO goal and replies with a focused plan for funnel clarity, automation opportunities, search visibility, and lead capture.</p>
+                </article>
+
+                <article class="faq-item glass reveal reveal-delay-1">
+                    <h3>Do you build AI automation and websites together?</h3>
+                    <p>Yes. We combine AI agents, n8n workflows, websites, SEO pages, lead forms, and first-party analytics so the marketing funnel and operations system work together.</p>
+                </article>
+
+                <article class="faq-item glass reveal reveal-delay-2">
+                    <h3>Can you help businesses in the USA, UK, and Canada?</h3>
+                    <p>Yes. CodeSimplr serves businesses and professionals across the United States, United Kingdom, Canada, UAE, India, and remote international markets.</p>
+                </article>
+
+                <article class="faq-item glass reveal reveal-delay-3">
+                    <h3>Where are website leads stored?</h3>
+                    <p>When Vercel environment variables and Neon Postgres are connected, contact and newsletter submissions are saved in the website_signups table and can be viewed through the admin dashboard.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
     <!-- FOOTER & LEAD CAPTURE -->
     <!-- ═══════════════════════════════════════════════════════════ -->
     <footer id="footer" class="footer-section">
@@ -948,17 +1082,19 @@
                 <div class="contact-header">
                     <span class="section-tag">Contact Us</span>
                     <h2 class="section-title">
-                        Tell Us What You Need
+                        Request Your Free Audit
                     </h2>
                     <p class="section-subtitle">
-                        Select the service areas you need, then add your details. You can also use the dedicated Contact page from the top menu.
+                        Select what you want improved, then add your details. We will review the funnel, automation, SEO, and lead capture path before replying.
                     </p>
                 </div>
 
                 <form class="contact-form" id="contactForm" data-whatsapp-number="919555163525">
                     <input type="text" name="website" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+                    <input type="hidden" name="offer" value="free-growth-audit">
+                    <input type="hidden" name="funnelStage" value="footer-conversion">
                     <div class="form-step active" data-step="1">
-                        <p class="form-step-label">Step 1: Select the services you need</p>
+                        <p class="form-step-label">Step 1: Choose what you want audited</p>
                         <div class="interest-chips">
                             <button type="button" class="interest-chip" data-interest="ai">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
@@ -977,7 +1113,7 @@
                                 SEO & Marketing
                             </button>
                         </div>
-                        <p class="form-hint" id="chipHint">Choose one or more services, then continue to the contact details form.</p>
+                        <p class="form-hint" id="chipHint">Choose one or more areas, then continue to the contact details form.</p>
                         <button type="button" class="btn btn-primary form-next" id="formNext1">
                             <span>Continue</span>
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -1001,7 +1137,7 @@
                         </div>
                         <div class="form-group">
                             <textarea id="contactMessage" name="message" class="form-input form-textarea" placeholder=" " rows="4" required></textarea>
-                            <label for="contactMessage" class="form-label">Tell us about your project</label>
+                            <label for="contactMessage" class="form-label">What should we improve first?</label>
                         </div>
                         <div class="form-actions">
                             <button type="button" class="btn btn-ghost form-prev">
@@ -1009,7 +1145,7 @@
                                 <span>Back</span>
                             </button>
                             <button type="submit" class="btn btn-primary">
-                                <span>Send Message</span>
+                                <span>Request Free Audit</span>
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                             </button>
                         </div>
@@ -1053,7 +1189,7 @@
                         <a href="#hero" class="footer-logo">
                             <span class="logo-brackets">&lt;</span><span class="logo-code">code</span><span class="logo-slash">/</span><span class="logo-simplr">simplr</span><span class="logo-brackets">&gt;</span>
                         </a>
-                        <p class="footer-brand-desc">Simplifying complexity. Building tomorrow's systems, brands, and careers today.</p>
+                        <p class="footer-brand-desc">Building AI automation, websites, SEO, and lead funnels that turn attention into qualified enquiries.</p>
                         <div class="footer-socials">
                             <a href="https://wa.me/919555163525?text=Hi%20CodeSimplr!%20I%20found%20you%20through%20the%20website." target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Contact CodeSimplr on WhatsApp">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -1064,10 +1200,10 @@
                     <div class="footer-col">
                         <h4 class="footer-col-title">Services</h4>
                         <ul class="footer-links">
-                            <li><a href="#services">AI Agents</a></li>
-                            <li><a href="#services">Workflow Automation</a></li>
-                            <li><a href="#services">Web Design</a></li>
-                            <li><a href="#services">SEO Services</a></li>
+                            <li><a href="ai-automation-agency.html">AI Agents</a></li>
+                            <li><a href="n8n-workflow-automation.html">Workflow Automation</a></li>
+                            <li><a href="website-design-seo.html">Web Design</a></li>
+                            <li><a href="website-design-seo.html">SEO Services</a></li>
                             <li><a href="#services">Resume Services</a></li>
                         </ul>
                     </div>

@@ -2,7 +2,7 @@
 
 The website now stores two kinds of backend data through Vercel Functions:
 
-- `/api/signups` stores contact-form leads and newsletter signups in `website_signups`.
+- `/api/signups` stores contact-form leads and newsletter signups in `website_signups`, including source, interests, offer, funnel stage, and page URL.
 - `/api/events` stores first-party traffic events in `website_events`, including page views, CTA clicks, and form submits.
 
 Both tables live in the same Neon Postgres database connected to your Vercel project.
@@ -52,6 +52,14 @@ In Vercel:
 5. Open Tables.
 6. Read `website_signups` for leads and newsletter subscribers.
 7. Read `website_events` for traffic events.
+
+Useful `website_signups` columns:
+
+- `source`: `contact` or `newsletter`.
+- `interests`: the services selected by the visitor.
+- `offer`: the signup offer, such as `free-growth-audit`, `ai-automation-audit`, or `website-seo-audit`.
+- `funnel_stage`: the page or funnel stage that produced the lead, such as `conversion`, `proof`, or `service-page`.
+- `page_url`: the exact URL where the visitor submitted the form.
 
 In the website:
 
