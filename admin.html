@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#0A0A0A">
+    <title>CodeSimplr Admin | Signups & Analytics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="legal-page admin-page">
+    <nav class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="nav-logo">
+                <span class="logo-brackets">&lt;</span><span class="logo-code">code</span><span class="logo-slash">/</span><span class="logo-simplr">simplr</span><span class="logo-brackets">&gt;</span>
+            </a>
+            <a href="index.html" class="nav-cta btn btn-primary-sm">Back to Site</a>
+        </div>
+    </nav>
+
+    <main class="legal-main">
+        <div class="admin-shell">
+            <div class="legal-kicker">Backend View</div>
+            <h1 class="legal-title">Signups & Website Analytics</h1>
+            <p class="legal-intro">
+                Use this page after your Vercel project has `DATABASE_URL` and `SIGNUPS_ADMIN_TOKEN` configured. Enter the token to view contact leads, newsletter signups, and first-party traffic events.
+            </p>
+
+            <form class="admin-control glass" id="adminForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="url" id="adminBaseUrl" class="form-input" placeholder=" " required>
+                        <label for="adminBaseUrl" class="form-label">Website URL</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="adminToken" class="form-input" placeholder=" " required>
+                        <label for="adminToken" class="form-label">Admin Token</label>
+                    </div>
+                </div>
+                <div class="admin-actions">
+                    <button type="submit" class="btn btn-primary">Load Dashboard</button>
+                    <button type="button" id="csvLink" class="btn btn-secondary">Download CSV</button>
+                </div>
+                <p class="admin-status" id="adminStatus">Token is only sent as an Authorization header to your own Vercel API.</p>
+            </form>
+
+            <section class="admin-metrics" id="adminMetrics" aria-live="polite">
+                <div class="admin-metric glass">
+                    <span id="metricVisitors">0</span>
+                    <p>Unique Visitors</p>
+                </div>
+                <div class="admin-metric glass">
+                    <span id="metricViews">0</span>
+                    <p>Page Views</p>
+                </div>
+                <div class="admin-metric glass">
+                    <span id="metricCtas">0</span>
+                    <p>CTA Clicks</p>
+                </div>
+                <div class="admin-metric glass">
+                    <span id="metricForms">0</span>
+                    <p>Form Submits</p>
+                </div>
+            </section>
+
+            <section class="admin-grid">
+                <div class="admin-card glass">
+                    <h2>Recent Signups</h2>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Source</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Interest</th>
+                                </tr>
+                            </thead>
+                            <tbody id="signupRows">
+                                <tr><td colspan="5">Load the dashboard to see signups.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="admin-card glass">
+                    <h2>Top Pages</h2>
+                    <div id="topPages" class="admin-list">No analytics loaded yet.</div>
+                </div>
+
+                <div class="admin-card glass">
+                    <h2>Traffic Sources</h2>
+                    <div id="topReferrers" class="admin-list">No analytics loaded yet.</div>
+                </div>
+
+                <div class="admin-card glass">
+                    <h2>Recent Events</h2>
+                    <div id="recentEvents" class="admin-list">No analytics loaded yet.</div>
+                </div>
+            </section>
+
+            <section class="admin-guide glass">
+                <h2>Where this data lives on Vercel</h2>
+                <ol>
+                    <li>Open Vercel Dashboard, then select the CodeSimplr project.</li>
+                    <li>Go to Storage or Integrations and open the connected Neon Postgres database.</li>
+                    <li>Open Tables and look for `website_signups` for leads and `website_events` for traffic events.</li>
+                    <li>Go to Project Settings, then Environment Variables, and confirm `DATABASE_URL` plus `SIGNUPS_ADMIN_TOKEN` exist for Production.</li>
+                    <li>Go to Analytics in the Vercel project sidebar to enable Vercel Web Analytics for aggregated visitor panels.</li>
+                </ol>
+            </section>
+        </div>
+    </main>
+
+    <script>
+      const form = document.getElementById('adminForm');
+      const statusEl = document.getElementById('adminStatus');
+      const baseInput = document.getElementById('adminBaseUrl');
+      const tokenInput = document.getElementById('adminToken');
+      const csvLink = document.getElementById('csvLink');
+
+      const defaultBase = window.location.protocol === 'file:' ? 'https://codesimplr.com' : window.location.origin;
+      baseInput.value = defaultBase;
+
+      const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      }[char]));
+
+      const formatDate = (value) => {
+        if (!value) return '';
+        return new Intl.DateTimeFormat(undefined, {
+          dateStyle: 'medium',
+          timeStyle: 'short',
+        }).format(new Date(value));
+      };
+
+      const authFetch = (url, token) => fetch(url, {
+        headers: { Authorization: `Bearer ${token}` },
+      }).then(async (response) => {
+        const body = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(body.error || `Request failed: ${response.status}`);
+        return body;
+      });
+
+      const renderList = (targetId, rows, emptyText = 'No data yet.') => {
+        const target = document.getElementById(targetId);
+        if (!rows?.length) {
+          target.textContent = emptyText;
+          return;
+        }
+
+        target.innerHTML = rows.map((row) => `
+          <div class="admin-list-row">
+            <span>${escapeHtml(row.label || 'Direct / unknown')}</span>
+            <strong>${escapeHtml(row.count)}</strong>
+          </div>
+        `).join('');
+      };
+
+      const renderSignups = (rows) => {
+        const target = document.getElementById('signupRows');
+        if (!rows?.length) {
+          target.innerHTML = '<tr><td colspan="5">No signups yet.</td></tr>';
+          return;
+        }
+
+        target.innerHTML = rows.map((row) => `
+          <tr>
+            <td>${escapeHtml(formatDate(row.created_at))}</td>
+            <td>${escapeHtml(row.source)}</td>
+            <td>${escapeHtml(row.name || '-')}</td>
+            <td>${escapeHtml(row.email)}</td>
+            <td>${escapeHtml(Array.isArray(row.interests) ? row.interests.join(', ') : '-')}</td>
+          </tr>
+        `).join('');
+      };
+
+      const renderEvents = (rows) => {
+        const target = document.getElementById('recentEvents');
+        if (!rows?.length) {
+          target.textContent = 'No traffic events yet.';
+          return;
+        }
+
+        target.innerHTML = rows.slice(0, 12).map((row) => `
+          <div class="admin-list-row">
+            <span>${escapeHtml(row.event_type)} on ${escapeHtml(row.path || '/')}</span>
+            <strong>${escapeHtml(formatDate(row.created_at))}</strong>
+          </div>
+        `).join('');
+      };
+
+      const downloadCsv = async () => {
+        const base = baseInput.value.trim().replace(/\/$/, '');
+        const token = tokenInput.value.trim();
+        if (!base || !token) {
+          statusEl.textContent = 'Enter the website URL and admin token before downloading CSV.';
+          return;
+        }
+
+        try {
+          const response = await fetch(`${base}/api/signups?limit=500&format=csv`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!response.ok) throw new Error(`CSV export failed: ${response.status}`);
+
+          const blob = await response.blob();
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'codesimplr-signups.csv';
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+          URL.revokeObjectURL(url);
+          statusEl.textContent = 'CSV downloaded.';
+        } catch (error) {
+          statusEl.textContent = error.message;
+        }
+      };
+
+      csvLink.addEventListener('click', downloadCsv);
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const base = baseInput.value.trim().replace(/\/$/, '');
+        const token = tokenInput.value.trim();
+        statusEl.textContent = 'Loading dashboard data...';
+
+        try {
+          const [signups, analytics] = await Promise.all([
+            authFetch(`${base}/api/signups?limit=100`, token),
+            authFetch(`${base}/api/events?days=30&limit=100`, token),
+          ]);
+
+          renderSignups(signups.signups || []);
+          renderList('topPages', analytics.topPages);
+          renderList('topReferrers', analytics.topReferrers, 'Mostly direct traffic so far.');
+          renderEvents(analytics.events || []);
+
+          document.getElementById('metricVisitors').textContent = analytics.summary?.unique_visitors || 0;
+          document.getElementById('metricViews').textContent = analytics.summary?.page_views || 0;
+          document.getElementById('metricCtas').textContent = analytics.summary?.cta_clicks || 0;
+          document.getElementById('metricForms').textContent = analytics.summary?.form_submits || 0;
+
+          statusEl.textContent = 'Dashboard loaded. Data shown is from the last 30 days.';
+        } catch (error) {
+          statusEl.textContent = error.message;
+        }
+      });
+    </script>
+</body>
+</html>

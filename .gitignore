@@ -12,6 +12,11 @@ desktop.ini
 .env*
 !.env.example
 
+# Local generated work artifacts
+outputs/
+tmp/
+work/
+
 # Misc
 *.log
 node_modules/

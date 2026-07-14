@@ -37,6 +37,82 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   };
 
+  const randomId = (prefix) => {
+    if (window.crypto?.randomUUID) return `${prefix}_${window.crypto.randomUUID()}`;
+    return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+  };
+
+  const getVisitorId = () => {
+    try {
+      const key = 'codesimplr_visitor_id';
+      const existing = window.localStorage.getItem(key);
+      if (existing) return existing;
+
+      const next = randomId('visitor');
+      window.localStorage.setItem(key, next);
+      return next;
+    } catch {
+      return randomId('visitor');
+    }
+  };
+
+  const getSessionId = () => {
+    try {
+      const key = 'codesimplr_session_id';
+      const existing = window.sessionStorage.getItem(key);
+      if (existing) return existing;
+
+      const next = randomId('session');
+      window.sessionStorage.setItem(key, next);
+      return next;
+    } catch {
+      return randomId('session');
+    }
+  };
+
+  const trackEvent = (eventType, metadata = {}) => {
+    if (window.location.protocol === 'file:') return Promise.resolve(false);
+
+    const params = new URLSearchParams(window.location.search);
+    return fetch('/api/events', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      keepalive: true,
+      body: JSON.stringify({
+        eventType,
+        visitorId: getVisitorId(),
+        sessionId: getSessionId(),
+        path: window.location.pathname,
+        pageUrl: window.location.href,
+        referrer: document.referrer || '',
+        utmSource: params.get('utm_source') || '',
+        utmMedium: params.get('utm_medium') || '',
+        utmCampaign: params.get('utm_campaign') || '',
+        metadata: {
+          pageTitle: document.title,
+          viewport: `${window.innerWidth}x${window.innerHeight}`,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          ...metadata,
+        },
+      }),
+    })
+      .then((response) => response.ok)
+      .catch(() => false);
+  };
+
+  trackEvent('page_view');
+
+  document.addEventListener('click', (event) => {
+    if (!(event.target instanceof Element)) return;
+    const trackedLink = event.target.closest('[data-track], a[href*="wa.me"], a[href="contact.html"]');
+    if (!trackedLink) return;
+
+    trackEvent('cta_click', {
+      label: trackedLink.dataset.track || trackedLink.textContent.trim().replace(/\s+/g, ' ').slice(0, 120),
+      href: trackedLink.getAttribute('href') || '',
+    });
+  }, { capture: true });
+
   /* ----------------------------------------------------------
      1. SCROLL-REVEAL ANIMATION SYSTEM
      ---------------------------------------------------------- */
@@ -324,6 +400,11 @@ document.addEventListener('DOMContentLoaded', () => {
         website,
       });
 
+      trackEvent('form_submit', {
+        source: 'contact',
+        interests: selectedInterests.join(', '),
+      });
+
       openWhatsapp(
         whatsappMessage,
         form.dataset.whatsappNumber || DEFAULT_WHATSAPP_NUMBER
@@ -384,6 +465,10 @@ document.addEventListener('DOMContentLoaded', () => {
         source: 'newsletter',
         email,
         website: form.querySelector('[name="website"]')?.value.trim(),
+      });
+
+      trackEvent('form_submit', {
+        source: 'newsletter',
       });
 
       openWhatsapp(
@@ -545,7 +630,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const el = document.querySelector('.typing-text');
     if (!el) return;
 
-    const phrases = ['AI Infrastructure.', 'Brand Design.', 'Career Acceleration.'];
+    const phrases = ['AI automations.', 'conversion websites.', 'SEO growth systems.'];
     const TYPE_SPEED = 80;       // ms per character
     const DELETE_SPEED = 40;
     const PAUSE_AFTER_TYPE = 1800;

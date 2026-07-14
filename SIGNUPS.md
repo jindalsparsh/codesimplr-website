@@ -1,18 +1,37 @@
-# CodeSimplr Signup Database
+# CodeSimplr Backend: Signups, Database, and Analytics
 
-The website stores newsletter and contact-form submissions through the Vercel Function at `/api/signups`.
+The website now stores two kinds of backend data through Vercel Functions:
 
-## 1. Create the database
+- `/api/signups` stores contact-form leads and newsletter signups in `website_signups`.
+- `/api/events` stores first-party traffic events in `website_events`, including page views, CTA clicks, and form submits.
 
-Use Vercel Marketplace Neon for Postgres. After Neon is connected to the Vercel project, make sure this environment variable exists in Vercel:
+Both tables live in the same Neon Postgres database connected to your Vercel project.
+
+## 1. Import or open the Vercel project
+
+1. Go to the Vercel Dashboard.
+2. Import the GitHub repo `jindalsparsh/codesimplr-website` if it is not already listed.
+3. Deploy the `master` branch.
+4. Open the project, then go to Project Settings.
+
+Important: the connected Vercel account available to Codex currently shows no projects, so the live project may be under a different Vercel account/team. The GitHub repo homepage also pointed to `https://codesimplr-website.vercel.app`, but that URL returned 404 during the audit. Importing the repo into the correct Vercel team fixes that.
+
+## 2. Create the database
+
+1. In the Vercel project, open Storage or Integrations.
+2. Add Neon Postgres from the Vercel Marketplace.
+3. Confirm Vercel creates this environment variable:
 
 ```env
 DATABASE_URL=postgres://...
 ```
 
-Then run the SQL in `database.sql` in the Neon SQL editor. The API also creates the table automatically on first request, but running the SQL once makes the database explicit.
+4. Open Neon, then open the SQL editor.
+5. Run the SQL from `database.sql`.
 
-## 2. Add an admin export token
+The API also creates the tables automatically on first request, but running `database.sql` once makes the database visible and explicit.
+
+## 3. Add the admin token
 
 Create a long random token and add it to Vercel project environment variables:
 
@@ -20,9 +39,30 @@ Create a long random token and add it to Vercel project environment variables:
 SIGNUPS_ADMIN_TOKEN=replace-with-a-long-random-admin-token
 ```
 
-Redeploy after adding or changing environment variables.
+Set it for Production and Preview if you want both environments to work. Redeploy after adding or changing environment variables.
 
-## 3. Export signups
+## 4. Where you see the signup database
+
+In Vercel:
+
+1. Open Dashboard.
+2. Select the CodeSimplr project.
+3. Open Storage or Integrations.
+4. Open the connected Neon database.
+5. Open Tables.
+6. Read `website_signups` for leads and newsletter subscribers.
+7. Read `website_events` for traffic events.
+
+In the website:
+
+1. Visit `/admin.html` on your deployed domain.
+2. Enter your deployed website URL.
+3. Enter `SIGNUPS_ADMIN_TOKEN`.
+4. Click Load Dashboard.
+
+That admin page calls the protected API and shows recent signups, unique visitors, page views, CTA clicks, top pages, referrers, and recent events.
+
+## 5. Export signups
 
 JSON:
 
@@ -39,4 +79,21 @@ curl -H "Authorization: Bearer $SIGNUPS_ADMIN_TOKEN" \
   -o codesimplr-signups.csv
 ```
 
-The export includes contact form leads and newsletter signups.
+## 6. View visitor analytics
+
+The site now has first-party analytics through `/api/events`. For Vercel's built-in dashboard analytics:
+
+1. Open the Vercel project.
+2. Click Analytics in the sidebar.
+3. Enable Web Analytics.
+4. Redeploy the site.
+5. After visitors arrive, review top pages, referrers, devices, and countries in the dashboard.
+
+For performance:
+
+1. Open Speed Insights in the Vercel project sidebar.
+2. Enable Speed Insights.
+3. Redeploy the site.
+4. Review Core Web Vitals after real users visit.
+
+Use first-party events for lead funnel tracking and Vercel Web Analytics for aggregate traffic panels.
