@@ -20,10 +20,10 @@ Exclude job seekers, firms with no visible workflow need, scraped personal addre
 
 1. Offer a free 3-point recruitment workflow audit.
 2. Return three specific priorities across candidate intake, follow-up, and reporting.
-3. Recommend one small paid pilot only when a useful implementation is evident.
+3. Recommend the fixed-scope 14-day paid pilot only when a useful implementation is evident.
 4. Agree scope, commercial terms, success criteria, and owner before counting a sale.
 
-A sale is counted only when a paid engagement is accepted and payment has been received. Set pricing and pilot duration before outreach begins; do not improvise a different offer for every lead.
+A sale is counted only when a paid engagement is accepted and payment has been received. The standard first engagement covers one workflow, one primary input, one destination system, one human approval point, testing, documentation, and handover over 14 days. Set one price and payment schedule before outreach begins; do not improvise a different offer for every lead.
 
 Campaign links:
 

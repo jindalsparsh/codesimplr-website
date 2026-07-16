@@ -71,7 +71,7 @@
   </url>
   <url>
     <loc>https://codesimplr.com/blog</loc>
-    <lastmod>2026-07-15</lastmod>
+    <lastmod>2026-07-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.86</priority>
   </url>
@@ -80,6 +80,12 @@
     <lastmod>2026-07-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://codesimplr.com/blog/recruitment-automation-workflows-staffing-agencies</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.82</priority>
   </url>
   <url>
     <loc>https://codesimplr.com/blog/seo-service-businesses-usa-uk-canada</loc>

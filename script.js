@@ -335,6 +335,33 @@ document.addEventListener('DOMContentLoaded', () => {
     if (offerFromUrl && offerInput) offerInput.value = offerFromUrl;
     if (stageFromUrl && funnelStageInput) funnelStageInput.value = stageFromUrl;
 
+    const contactOfferCopy = {
+      'recruitment-automation-audit': {
+        kicker: 'Recruitment Workflow Audit',
+        title: 'Get Your Free Recruitment Workflow Audit',
+        intro: 'Share the repeated candidate intake, follow-up, or reporting step. CodeSimplr will reply with three practical priorities and identify whether one bounded pilot is worth scoping.',
+        submit: 'Get My Recruitment Audit',
+      },
+      'recruitment-automation-pilot': {
+        kicker: 'Paid 14-Day Pilot',
+        title: 'Scope Your Recruitment Workflow Pilot',
+        intro: 'Share the workflow, current tools, and main bottleneck. CodeSimplr will confirm a bounded 14-day scope, required access, acceptance criteria, fixed price, and payment schedule before any implementation begins.',
+        submit: 'Request My Pilot Scope',
+      },
+    };
+
+    const offerCopy = contactOfferCopy[offerInput?.value];
+    if (offerCopy) {
+      const kicker = document.getElementById('contactKicker');
+      const title = document.getElementById('contactTitle');
+      const intro = document.getElementById('contactIntro');
+      const submit = document.getElementById('contactSubmitLabel');
+      if (kicker) kicker.textContent = offerCopy.kicker;
+      if (title) title.textContent = offerCopy.title;
+      if (intro) intro.textContent = offerCopy.intro;
+      if (submit) submit.textContent = offerCopy.submit;
+    }
+
     /* — helpers — */
     const showStep = (index) => {
       steps.forEach((step, i) => {
@@ -399,6 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
       'website-seo-audit': ['website', 'seo'],
       'n8n-automation-audit': ['ai'],
       'recruitment-automation-audit': ['ai', 'tracking'],
+      'recruitment-automation-pilot': ['ai', 'tracking'],
     };
     const interestParam = pageParams.get('interest');
     const defaultInterests = new Set([
