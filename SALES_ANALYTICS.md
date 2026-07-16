@@ -1,4 +1,4 @@
-# CodeSimplr Sales & Analytics Playbook
+# CodeSimplr Sales & Analytics Setup
 
 ## Current audit findings
 
@@ -18,8 +18,13 @@ Track these every week:
 - CTA clicks
 - Contact form submissions
 - Newsletter signups
+- Qualified leads
+- Discovery calls
+- Proposals
+- Attributed sales won
 - Contact conversion rate: `form submits / unique visitors`
 - CTA conversion rate: `CTA clicks / unique visitors`
+- Sales conversion rate: `won / qualified leads`
 
 ## Where to see the data
 
@@ -39,30 +44,23 @@ For Vercel's own visitor panels, enable Web Analytics in the Vercel project side
 
 ## How to increase sales
 
-1. Push visitors to one primary action: `Get a Growth Plan`.
-2. Keep project proof above the reviews section so visitors see evidence before testimonials.
-3. Publish one blog post per week around buyer-intent keywords:
-   - AI automation for service businesses
-   - n8n workflow automation agency
-   - SEO for agencies in USA, UK, Canada
-   - website conversion checklist
-   - AI resume screening automation
-4. Add UTM tags to outreach links:
-   - `?utm_source=linkedin&utm_medium=dm&utm_campaign=ai_automation`
-   - `?utm_source=email&utm_medium=outreach&utm_campaign=website_audit`
+1. Push visitors to one primary action: `Get a Free 3-Point Audit`.
+2. Start with recruitment and staffing agencies and direct relevant traffic to `/recruitment-automation`.
+3. Follow the qualification, email, LinkedIn, referral, and organic-social sequences in `GROWTH_PLAYBOOK.md`.
+4. Use the exact campaign links in that playbook so attribution survives the landing-page-to-contact journey.
 5. Review the admin dashboard weekly:
    - If visitors are low, publish/distribute more content.
    - If CTA clicks are low, test hero copy and CTA labels.
    - If clicks are high but forms are low, simplify the contact form.
-   - If signups are coming from one country or service, create a dedicated landing page.
-6. Follow up every contact lead within 12 hours with a specific next step and one relevant project example.
+   - If positive replies are low, improve prospect research and message relevance.
+   - If calls happen but proposals or wins do not, record objections and revise the paid pilot.
+6. Follow up every contact lead within one business day with a specific next step and one relevant public project example.
 
-## Suggested next landing pages
+## Current landing pages
 
 - `/ai-automation-agency`
 - `/n8n-workflow-automation`
 - `/website-design-seo`
-- `/ai-resume-screening`
-- `/seo-for-service-businesses`
+- `/recruitment-automation`
 
-Each page should include the problem, offer, proof, process, FAQ, and a clear contact form.
+Each page includes the problem, offer, proof, process, FAQ, and a clear audit path. Add new pages only when search, campaign, or sales data identifies a distinct buyer need.

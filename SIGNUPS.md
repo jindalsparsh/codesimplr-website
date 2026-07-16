@@ -2,7 +2,7 @@
 
 The website now stores two kinds of backend data through Vercel Functions:
 
-- `/api/signups` stores contact-form leads and newsletter signups in `website_signups`, including source, interests, offer, funnel stage, and page URL.
+- `/api/signups` stores contact-form leads and newsletter signups in `website_signups`, including source, interests, offer, funnel stage, campaign attribution, and pipeline status.
 - `/api/events` stores first-party traffic events in `website_events`, including page views, CTA clicks, and form submits.
 
 Both tables live in the same Neon Postgres database connected to your Vercel project.
@@ -59,6 +59,9 @@ Useful `website_signups` columns:
 - `interests`: the services selected by the visitor.
 - `offer`: the signup offer, such as `free-growth-audit`, `ai-automation-audit`, or `website-seo-audit`.
 - `funnel_stage`: the page or funnel stage that produced the lead, such as `conversion`, `proof`, or `service-page`.
+- `lead_status`: `new`, `qualified`, `contacted`, `discovery`, `proposal`, `won`, or `lost`.
+- `utm_source`, `utm_medium`, and `utm_campaign`: the campaign that first brought the visitor into the current browsing session.
+- `landing_page`: the first campaign URL retained when a visitor moves from a landing page to the contact form.
 - `page_url`: the exact URL where the visitor submitted the form.
 
 In the website:
@@ -68,7 +71,7 @@ In the website:
 3. Enter `SIGNUPS_ADMIN_TOKEN`.
 4. Click Load Dashboard.
 
-That admin page calls the protected API and shows recent signups, unique visitors, page views, CTA clicks, top pages, referrers, and recent events.
+That admin page calls the protected API and shows the lead pipeline, attributed sales progress toward 10, recent signups, unique visitors, page views, CTA clicks, top pages, referrers, and recent events. Change a lead's status from the pipeline table; mark it `won` only after the paid engagement is accepted and payment is received.
 
 ## 5. Export signups
 

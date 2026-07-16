@@ -621,7 +621,7 @@ input, textarea, select {
 
 .hero-proof-strip {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 0.75rem;
   margin-top: 1.4rem;
   padding: 0.85rem;
@@ -2322,7 +2322,7 @@ input, textarea, select {
 
 .admin-metrics {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   margin-top: 1.5rem;
 }
@@ -2341,6 +2341,10 @@ input, textarea, select {
 .admin-metric p {
   color: var(--clr-text-secondary);
   font-size: 0.85rem;
+}
+
+.admin-metric-goal {
+  border-color: rgba(196, 216, 46, 0.35);
 }
 
 .admin-grid {
@@ -2368,7 +2372,23 @@ input, textarea, select {
 .admin-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 720px;
+  min-width: 1040px;
+}
+
+.admin-status-select {
+  width: 100%;
+  min-width: 112px;
+  padding: 0.55rem 0.65rem;
+  color: var(--clr-white);
+  background: var(--clr-bg-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-sm);
+  font: inherit;
+}
+
+.admin-status-select:focus-visible {
+  outline: 2px solid var(--clr-lime);
+  outline-offset: 2px;
 }
 
 .admin-table th,

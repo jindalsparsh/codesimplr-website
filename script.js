@@ -17,6 +17,38 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  const ATTRIBUTION_KEY = 'codesimplr_campaign_attribution';
+
+  const getCampaignAttribution = () => {
+    const params = new URLSearchParams(window.location.search);
+    const current = {
+      utmSource: params.get('utm_source') || '',
+      utmMedium: params.get('utm_medium') || '',
+      utmCampaign: params.get('utm_campaign') || '',
+    };
+
+    try {
+      const saved = JSON.parse(window.sessionStorage.getItem(ATTRIBUTION_KEY) || '{}');
+      const attribution = {
+        utmSource: current.utmSource || saved.utmSource || '',
+        utmMedium: current.utmMedium || saved.utmMedium || '',
+        utmCampaign: current.utmCampaign || saved.utmCampaign || '',
+        landingPage: saved.landingPage || window.location.href,
+      };
+
+      if (current.utmSource || current.utmMedium || current.utmCampaign) {
+        attribution.landingPage = window.location.href;
+      }
+
+      window.sessionStorage.setItem(ATTRIBUTION_KEY, JSON.stringify(attribution));
+      return attribution;
+    } catch {
+      return { ...current, landingPage: window.location.href };
+    }
+  };
+
+  getCampaignAttribution();
+
   const saveSignup = (payload) => {
     if (window.location.protocol === 'file:') return Promise.resolve(false);
 
@@ -26,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
       keepalive: true,
       body: JSON.stringify({
         ...payload,
+        ...getCampaignAttribution(),
         pageUrl: window.location.href,
         referrer: document.referrer || '',
       }),
@@ -73,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const trackEvent = (eventType, metadata = {}) => {
     if (window.location.protocol === 'file:') return Promise.resolve(false);
 
-    const params = new URLSearchParams(window.location.search);
+    const attribution = getCampaignAttribution();
     return fetch('/api/events', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -85,9 +118,9 @@ document.addEventListener('DOMContentLoaded', () => {
         path: window.location.pathname,
         pageUrl: window.location.href,
         referrer: document.referrer || '',
-        utmSource: params.get('utm_source') || '',
-        utmMedium: params.get('utm_medium') || '',
-        utmCampaign: params.get('utm_campaign') || '',
+        utmSource: attribution.utmSource,
+        utmMedium: attribution.utmMedium,
+        utmCampaign: attribution.utmCampaign,
         metadata: {
           pageTitle: document.title,
           viewport: `${window.innerWidth}x${window.innerHeight}`,
@@ -361,10 +394,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const offerInterestDefaults = {
-      'free-growth-audit': ['seo', 'branding', 'ai'],
+      'free-growth-audit': ['seo', 'website', 'ai'],
       'ai-automation-audit': ['ai'],
-      'website-seo-audit': ['branding', 'seo'],
+      'website-seo-audit': ['website', 'seo'],
       'n8n-automation-audit': ['ai'],
+      'recruitment-automation-audit': ['ai', 'tracking'],
     };
     const interestParam = pageParams.get('interest');
     const defaultInterests = new Set([

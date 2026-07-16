@@ -12,6 +12,15 @@ const json = (response, status = 200) =>
 const MAX_FIELD_LENGTH = 4000;
 const MAX_SIGNUPS_EXPORT = 500;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const LEAD_STATUSES = new Set([
+  'new',
+  'qualified',
+  'contacted',
+  'discovery',
+  'proposal',
+  'won',
+  'lost',
+]);
 
 let sqlClient;
 
@@ -58,6 +67,12 @@ const ensureTable = async (sql) => {
       interests JSONB NOT NULL DEFAULT '[]'::jsonb,
       offer TEXT,
       funnel_stage TEXT,
+      lead_status TEXT NOT NULL DEFAULT 'new',
+      status_updated_at TIMESTAMPTZ,
+      utm_source TEXT,
+      utm_medium TEXT,
+      utm_campaign TEXT,
+      landing_page TEXT,
       message TEXT,
       page_url TEXT,
       referrer TEXT,
@@ -67,6 +82,12 @@ const ensureTable = async (sql) => {
 
   await sql`ALTER TABLE website_signups ADD COLUMN IF NOT EXISTS offer TEXT`;
   await sql`ALTER TABLE website_signups ADD COLUMN IF NOT EXISTS funnel_stage TEXT`;
+  await sql`ALTER TABLE website_signups ADD COLUMN IF NOT EXISTS lead_status TEXT NOT NULL DEFAULT 'new'`;
+  await sql`ALTER TABLE website_signups ADD COLUMN IF NOT EXISTS status_updated_at TIMESTAMPTZ`;
+  await sql`ALTER TABLE website_signups ADD COLUMN IF NOT EXISTS utm_source TEXT`;
+  await sql`ALTER TABLE website_signups ADD COLUMN IF NOT EXISTS utm_medium TEXT`;
+  await sql`ALTER TABLE website_signups ADD COLUMN IF NOT EXISTS utm_campaign TEXT`;
+  await sql`ALTER TABLE website_signups ADD COLUMN IF NOT EXISTS landing_page TEXT`;
 
   await sql`
     CREATE INDEX IF NOT EXISTS website_signups_created_at_idx
@@ -98,6 +119,12 @@ const toCsv = (rows) => {
     'interests',
     'offer',
     'funnel_stage',
+    'lead_status',
+    'status_updated_at',
+    'utm_source',
+    'utm_medium',
+    'utm_campaign',
+    'landing_page',
     'message',
     'page_url',
     'referrer',
@@ -140,6 +167,10 @@ async function handleRequest(request) {
         interests: cleanInterests(payload.interests),
         offer: cleanText(payload.offer, 160),
         funnelStage: cleanText(payload.funnelStage, 120),
+        utmSource: cleanText(payload.utmSource, 200),
+        utmMedium: cleanText(payload.utmMedium, 200),
+        utmCampaign: cleanText(payload.utmCampaign, 200),
+        landingPage: cleanText(payload.landingPage, 600),
         message: cleanText(payload.message, 2000),
         pageUrl: cleanText(payload.pageUrl, 600),
         referrer: cleanText(payload.referrer, 600),
@@ -158,6 +189,11 @@ async function handleRequest(request) {
           interests,
           offer,
           funnel_stage,
+          lead_status,
+          utm_source,
+          utm_medium,
+          utm_campaign,
+          landing_page,
           message,
           page_url,
           referrer,
@@ -171,6 +207,11 @@ async function handleRequest(request) {
           ${JSON.stringify(signup.interests)}::jsonb,
           ${signup.offer},
           ${signup.funnelStage},
+          'new',
+          ${signup.utmSource},
+          ${signup.utmMedium},
+          ${signup.utmCampaign},
+          ${signup.landingPage},
           ${signup.message},
           ${signup.pageUrl},
           ${signup.referrer},
@@ -180,6 +221,36 @@ async function handleRequest(request) {
       `;
 
       return json({ ok: true, id: row.id, createdAt: row.created_at }, 201);
+    }
+
+    if (request.method === 'PATCH') {
+      if (!isAuthorized(request)) {
+        return json({ error: 'Unauthorized.' }, 401);
+      }
+
+      const payload = await request.json().catch(() => ({}));
+      const id = Number.parseInt(payload.id, 10);
+      const leadStatus = cleanText(payload.leadStatus, 40);
+
+      if (!Number.isSafeInteger(id) || id < 1 || !LEAD_STATUSES.has(leadStatus)) {
+        return json({ error: 'A valid signup id and lead status are required.' }, 400);
+      }
+
+      const sql = getSql();
+      await ensureTable(sql);
+
+      const [row] = await sql`
+        UPDATE website_signups
+        SET lead_status = ${leadStatus}, status_updated_at = NOW()
+        WHERE id = ${id}
+        RETURNING id, lead_status, status_updated_at
+      `;
+
+      if (!row) {
+        return json({ error: 'Signup not found.' }, 404);
+      }
+
+      return json({ ok: true, signup: row });
     }
 
     if (request.method === 'GET') {
@@ -207,6 +278,12 @@ async function handleRequest(request) {
           interests,
           offer,
           funnel_stage,
+          lead_status,
+          status_updated_at,
+          utm_source,
+          utm_medium,
+          utm_campaign,
+          landing_page,
           message,
           page_url,
           referrer,
@@ -214,6 +291,14 @@ async function handleRequest(request) {
         FROM website_signups
         ORDER BY created_at DESC
         LIMIT ${limit}
+      `;
+
+      const [summary] = await sql`
+        SELECT
+          COUNT(*)::int AS total_signups,
+          COUNT(*) FILTER (WHERE source = 'contact')::int AS contact_leads,
+          COUNT(*) FILTER (WHERE lead_status = 'won')::int AS sales_won
+        FROM website_signups
       `;
 
       if (url.searchParams.get('format') === 'csv') {
@@ -227,7 +312,7 @@ async function handleRequest(request) {
         });
       }
 
-      return json({ ok: true, signups: rows });
+      return json({ ok: true, summary, signups: rows });
     }
 
     return json({ error: 'Method not allowed.' }, 405);
@@ -246,5 +331,9 @@ export function GET(request) {
 }
 
 export function POST(request) {
+  return handleRequest(request);
+}
+
+export function PATCH(request) {
   return handleRequest(request);
 }
