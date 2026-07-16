@@ -496,6 +496,402 @@ document.addEventListener('DOMContentLoaded', () => {
   initRecruitmentRoiCalculator();
 
   /* ----------------------------------------------------------
+     RECRUITMENT AUTOMATION READINESS ASSESSMENT
+     ---------------------------------------------------------- */
+  const initRecruitmentReadinessAssessment = () => {
+    const form = document.getElementById('recruitmentReadinessAssessment');
+    if (!form) return;
+
+    const questions = [
+      {
+        id: 'capture',
+        question: 'Where does candidate information arrive today?',
+        help: 'Choose the option that best reflects your current state.',
+        options: [
+          { value: 'ats-crm', label: 'One ATS or CRM', score: 3, pain: { intake: 0 } },
+          { value: 'forms-inbox', label: 'Forms and inbox', score: 2, pain: { intake: 1 } },
+          { value: 'forms-inbox-sheets', label: 'Forms, inbox, and spreadsheets', score: 1, pain: { intake: 3 } },
+          { value: 'manual-unstructured', label: 'Mostly manual or unstructured', score: 0, pain: { intake: 2 } },
+        ],
+      },
+      {
+        id: 'structure',
+        question: 'How consistent is the workflow from one recruiter to another?',
+        help: 'Think about the steps, fields, exceptions, and handoffs—not the software brand.',
+        options: [
+          { value: 'documented', label: 'Documented and followed consistently', score: 3 },
+          { value: 'usually-same', label: 'Usually the same with a few exceptions', score: 2 },
+          { value: 'varies', label: 'Varies by recruiter or client', score: 1 },
+          { value: 'different-every-time', label: 'Different almost every time', score: 0 },
+        ],
+      },
+      {
+        id: 'volume',
+        question: 'How often does the team repeat this workflow each week?',
+        help: 'Use a practical estimate. The assessment does not treat volume as guaranteed value.',
+        options: [
+          { value: 'under-25', label: 'Fewer than 25 times', score: 0 },
+          { value: '25-75', label: '25–75 times', score: 1 },
+          { value: '76-200', label: '76–200 times', score: 2 },
+          { value: 'over-200', label: 'More than 200 times', score: 3 },
+        ],
+      },
+      {
+        id: 'follow-up',
+        question: 'How are candidate status updates handled today?',
+        help: 'Choose the usual operating method, not the best-case exception.',
+        options: [
+          { value: 'automated-ats', label: 'Triggered from the ATS or CRM', score: 3, pain: { followUp: 0 } },
+          { value: 'scheduled-templates', label: 'Scheduled with templates and reminders', score: 2, pain: { followUp: 1 } },
+          { value: 'manual-reminders', label: 'Sent manually from recruiter reminders', score: 1, pain: { followUp: 3 } },
+          { value: 'inconsistent', label: 'Inconsistent or without a clear owner', score: 0, pain: { followUp: 2 } },
+        ],
+      },
+      {
+        id: 'reporting',
+        question: 'How are weekly client or team reports prepared?',
+        help: 'Choose the closest match for the report that repeats most often.',
+        options: [
+          { value: 'one-system', label: 'Generated from one approved system', score: 3, pain: { reporting: 0 } },
+          { value: 'ats-exports', label: 'Assembled from ATS or CRM exports', score: 2, pain: { reporting: 1 } },
+          { value: 'spreadsheets', label: 'Assembled across spreadsheets', score: 1, pain: { reporting: 3 } },
+          { value: 'ad-hoc', label: 'Written ad hoc from messages and notes', score: 0, pain: { reporting: 2 } },
+        ],
+      },
+      {
+        id: 'ownership',
+        question: 'Can one person own the pilot and compare a before/after baseline?',
+        help: 'A bounded pilot needs one accountable owner and a current-state measurement.',
+        options: [
+          { value: 'owner-baseline', label: 'Yes—one owner and a usable baseline', score: 3 },
+          { value: 'owner-no-baseline', label: 'One owner, but no baseline yet', score: 2 },
+          { value: 'baseline-no-owner', label: 'A baseline exists, but ownership is unclear', score: 1 },
+          { value: 'neither', label: 'Neither is defined yet', score: 0 },
+        ],
+      },
+    ];
+
+    const workflows = {
+      intake: {
+        slug: 'candidate-intake',
+        title: 'Candidate intake',
+        summary: 'Standardize incoming candidate details, acknowledge receipt, and prepare recruiter-ready context before any screening decision.',
+        approval: 'A recruiter confirms the structured record before it enters the ATS or CRM.',
+        measures: ['Time to recruiter-ready record', 'Missing-field rate', 'Acknowledgement SLA'],
+      },
+      followUp: {
+        slug: 'candidate-follow-up',
+        title: 'Candidate follow-up',
+        summary: 'Trigger consistent updates and reminders from one source while recruiters review exceptions and sensitive messages.',
+        approval: 'A recruiter reviews exceptions and approves any high-stakes or personalized message.',
+        measures: ['Updates sent on time', 'Recruiter follow-up minutes', 'Exceptions requiring review'],
+      },
+      reporting: {
+        slug: 'weekly-reporting',
+        title: 'Weekly reporting',
+        summary: 'Generate a consistent draft from approved source data before it is shared with clients or the team.',
+        approval: 'An account lead checks the draft, context, and exceptions before distribution.',
+        measures: ['Report preparation time', 'On-time delivery', 'Data corrections after review'],
+      },
+      audit: {
+        slug: 'next-bottleneck-audit',
+        title: 'Next-bottleneck audit',
+        summary: 'Your intake, follow-up, and reporting answers show limited obvious manual friction. Map the next repeated handoff before adding another automation.',
+        approval: 'An operations owner confirms the bottleneck and baseline before any build.',
+        measures: ['Manual handoffs per week', 'Exception volume', 'Admin time at the bottleneck'],
+      },
+    };
+
+    const assessmentView = document.getElementById('readinessAssessmentView');
+    const resultView = document.getElementById('readinessResult');
+    const progressLabel = document.getElementById('readinessProgressLabel');
+    const progressTrack = form.querySelector('[role="progressbar"]');
+    const progressBar = document.getElementById('readinessProgressBar');
+    const questionEl = document.getElementById('readinessQuestion');
+    const helpEl = document.getElementById('readinessHelp');
+    const optionsEl = document.getElementById('readinessOptions');
+    const nextButton = document.getElementById('readinessNext');
+    const backButton = document.getElementById('readinessBack');
+    const statusEl = document.getElementById('readinessStatus');
+    const railItems = Array.from(document.querySelectorAll('.readiness-rail [data-area]'));
+    const scoreEl = document.getElementById('readinessScore');
+    const resultHeading = document.getElementById('readinessResultHeading');
+    const resultSummary = document.getElementById('readinessResultSummary');
+    const scale = document.getElementById('readinessScale');
+    const reasons = document.getElementById('readinessReasons');
+    const workflowEl = document.getElementById('readinessWorkflow');
+    const workflowSummary = document.getElementById('readinessWorkflowSummary');
+    const approvalEl = document.getElementById('readinessApproval');
+    const measuresEl = document.getElementById('readinessMeasures');
+    const whatsappButton = document.getElementById('readinessWhatsapp');
+    const auditLink = document.getElementById('readinessAuditLink');
+    const copyButton = document.getElementById('readinessCopy');
+    const copyStatus = document.getElementById('readinessCopyStatus');
+    const retakeButton = document.getElementById('readinessRetake');
+    const pageParams = new URLSearchParams(window.location.search);
+    const answers = Array(questions.length).fill('');
+    let currentIndex = 0;
+    let activeResult = null;
+
+    const optionFor = (question, value) => question.options.find((option) => option.value === value);
+
+    const renderQuestion = () => {
+      const question = questions[currentIndex];
+      progressLabel.textContent = `Question ${currentIndex + 1} of ${questions.length}`;
+      progressTrack.setAttribute('aria-valuenow', String(currentIndex + 1));
+      progressBar.style.width = `${((currentIndex + 1) / questions.length) * 100}%`;
+      questionEl.textContent = question.question;
+      helpEl.textContent = question.help;
+      statusEl.textContent = '';
+      backButton.hidden = currentIndex === 0;
+      nextButton.innerHTML = currentIndex === questions.length - 1
+        ? 'See my result <span aria-hidden="true">&rarr;</span>'
+        : 'Next question <span aria-hidden="true">&rarr;</span>';
+
+      optionsEl.replaceChildren();
+      question.options.forEach((option, optionIndex) => {
+        const label = document.createElement('label');
+        label.className = 'readiness-option';
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = question.id;
+        input.value = option.value;
+        input.checked = answers[currentIndex] === option.value;
+        input.id = `readiness-${question.id}-${optionIndex}`;
+        const text = document.createElement('span');
+        text.textContent = option.label;
+        label.append(input, text);
+        optionsEl.append(label);
+      });
+
+      railItems.forEach((item) => {
+        const areaIndex = questions.findIndex((questionItem) => questionItem.id === item.dataset.area);
+        item.classList.toggle('is-complete', Boolean(answers[areaIndex]) || currentIndex > areaIndex);
+      });
+    };
+
+    const scoreAssessment = () => {
+      let score = 0;
+      const pain = { intake: 0, followUp: 0, reporting: 0 };
+
+      questions.forEach((question, index) => {
+        const option = optionFor(question, answers[index]);
+        if (!option) return;
+        score += option.score;
+        Object.entries(option.pain || {}).forEach(([key, value]) => {
+          pain[key] += value;
+        });
+      });
+
+      let level;
+      if (score <= 6) {
+        level = {
+          key: 'map-first',
+          title: 'Map the process before automating',
+          summary: 'The safest next step is to document one workflow, clean the main inputs, and name an owner before building.',
+          reasons: ['The process is too inconsistent for a safe automation build.', 'Map the input, owner, and approval point first.'],
+        };
+      } else if (score <= 12) {
+        level = {
+          key: 'prepare',
+          title: 'Prepare one workflow for a pilot',
+          summary: 'Your process has a usable starting point, but the baseline or handoff needs tightening before a paid build.',
+          reasons: ['One workflow is repeatable enough to define.', 'The baseline or handoff still needs tightening.'],
+        };
+      } else {
+        level = {
+          key: 'pilot-ready',
+          title: 'Pilot-ready with one focused workflow',
+          summary: 'Your process has enough structure and ownership to test one bounded workflow. Validate the baseline before investing.',
+          reasons: ['The workflow repeats often enough to measure.', 'A human approval point can stay in control.'],
+        };
+      }
+
+      const ranked = Object.entries(pain).sort((a, b) => b[1] - a[1]);
+      const workflow = ranked[0][1] === 0 ? workflows.audit : workflows[ranked[0][0]];
+      return { score, level, workflow, pain };
+    };
+
+    const buildContactUrl = (result) => {
+      const params = new URLSearchParams({
+        offer: 'recruitment-automation-audit',
+        stage: 'readiness-assessment',
+        interest: 'ai,tracking',
+        readiness_score: String(result.score),
+        readiness_level: result.level.key,
+        recommended_workflow: result.workflow.slug,
+        approval_point: result.workflow.approval,
+        measures: result.workflow.measures.join('|'),
+      });
+      return `contact.html?${params.toString()}`;
+    };
+
+    const buildShareUrl = () => {
+      const url = new URL(window.location.href);
+      url.hash = '';
+      questions.forEach((question, index) => url.searchParams.set(`q${index + 1}`, answers[index]));
+      url.searchParams.set('utm_source', 'assessment-share');
+      url.searchParams.set('utm_medium', 'referral');
+      url.searchParams.set('utm_campaign', 'recruitment-readiness-assessment');
+      return url.toString();
+    };
+
+    const buildWhatsappMessage = (result) => [
+      'Hi CodeSimplr! I completed the Recruitment Automation Readiness Assessment.',
+      `Readiness score: ${result.score}/18`,
+      `Readiness level: ${result.level.title}`,
+      `Recommended first workflow: ${result.workflow.title}`,
+      `Human approval point: ${result.workflow.approval}`,
+      `Pilot measures: ${result.workflow.measures.join(', ')}`,
+      'I would like a free workflow audit to validate this result against our real systems and process.',
+    ].join('\n');
+
+    const syncAnswerQuery = () => {
+      const url = new URL(window.location.href);
+      questions.forEach((question, index) => url.searchParams.set(`q${index + 1}`, answers[index]));
+      window.history.replaceState(null, '', url);
+    };
+
+    const showResult = ({ fromQuery = false } = {}) => {
+      const result = scoreAssessment();
+      activeResult = result;
+      assessmentView.hidden = true;
+      resultView.hidden = false;
+      scoreEl.textContent = String(result.score);
+      resultHeading.textContent = result.level.title;
+      resultSummary.textContent = result.level.summary;
+      scale.style.setProperty('--readiness-position', `${16.7 + (result.score / 18) * 66.6}%`);
+      reasons.replaceChildren(...result.level.reasons.map((reason) => {
+        const item = document.createElement('li');
+        item.textContent = reason;
+        return item;
+      }));
+      workflowEl.textContent = result.workflow.title;
+      workflowSummary.textContent = result.workflow.summary;
+      approvalEl.textContent = result.workflow.approval;
+      measuresEl.replaceChildren(...result.workflow.measures.map((measure) => {
+        const item = document.createElement('li');
+        item.textContent = measure;
+        return item;
+      }));
+      whatsappButton.dataset.message = buildWhatsappMessage(result);
+      auditLink.href = buildContactUrl(result);
+      copyButton.dataset.shareUrl = buildShareUrl();
+      syncAnswerQuery();
+
+      trackEvent(fromQuery ? 'assessment_result_view' : 'assessment_complete', {
+        score: result.score,
+        readinessLevel: result.level.key,
+        recommendedWorkflow: result.workflow.slug,
+        source: fromQuery ? 'shared-link' : 'completed-assessment',
+      });
+
+      if (!fromQuery) {
+        const scorecard = resultView.querySelector('.readiness-scorecard');
+        scorecard.tabIndex = -1;
+        scorecard.focus({ preventScroll: true });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+
+    form.addEventListener('change', (event) => {
+      if (!(event.target instanceof HTMLInputElement) || event.target.type !== 'radio') return;
+      answers[currentIndex] = event.target.value;
+      statusEl.textContent = '';
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const selected = form.querySelector('input[type="radio"]:checked');
+      if (!selected) {
+        statusEl.textContent = 'Choose one answer to continue.';
+        return;
+      }
+
+      answers[currentIndex] = selected.value;
+      trackEvent('assessment_answer', {
+        question: questions[currentIndex].id,
+        answer: selected.value,
+        questionNumber: currentIndex + 1,
+      });
+
+      if (currentIndex < questions.length - 1) {
+        currentIndex += 1;
+        renderQuestion();
+        questionEl.focus?.();
+        return;
+      }
+
+      showResult();
+    });
+
+    backButton.addEventListener('click', () => {
+      if (currentIndex === 0) return;
+      currentIndex -= 1;
+      renderQuestion();
+    });
+
+    retakeButton.addEventListener('click', () => {
+      answers.fill('');
+      currentIndex = 0;
+      activeResult = null;
+      const url = new URL(window.location.href);
+      questions.forEach((question, index) => url.searchParams.delete(`q${index + 1}`));
+      window.history.replaceState(null, '', url);
+      resultView.hidden = true;
+      assessmentView.hidden = false;
+      renderQuestion();
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      trackEvent('assessment_retake');
+    });
+
+    whatsappButton.addEventListener('click', () => {
+      if (!activeResult) return;
+      openWhatsapp(whatsappButton.dataset.message);
+    });
+
+    copyButton.addEventListener('click', async () => {
+      const url = copyButton.dataset.shareUrl;
+      let copied = false;
+
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(url);
+          copied = true;
+        }
+      } catch {
+        copied = false;
+      }
+
+      if (!copied) {
+        const temporary = document.createElement('textarea');
+        temporary.value = url;
+        temporary.setAttribute('readonly', '');
+        temporary.style.position = 'fixed';
+        temporary.style.opacity = '0';
+        document.body.appendChild(temporary);
+        temporary.select();
+        copied = document.execCommand('copy');
+        temporary.remove();
+      }
+
+      copyStatus.textContent = copied ? 'Share link copied.' : 'Copy failed. Select the address from your browser instead.';
+      setTimeout(() => { copyStatus.textContent = ''; }, 3500);
+    });
+
+    const queryAnswers = questions.map((question, index) => {
+      const incoming = pageParams.get(`q${index + 1}`) || '';
+      return optionFor(question, incoming) ? incoming : '';
+    });
+    queryAnswers.forEach((answer, index) => { answers[index] = answer; });
+
+    renderQuestion();
+    if (queryAnswers.every(Boolean)) showResult({ fromQuery: true });
+  };
+
+  initRecruitmentReadinessAssessment();
+
+  /* ----------------------------------------------------------
      5. SMOOTH SCROLL FOR ANCHOR LINKS
      ---------------------------------------------------------- */
   const initSmoothScroll = () => {
@@ -603,6 +999,34 @@ document.addEventListener('DOMContentLoaded', () => {
         addressableShare ? `Addressable share: ${addressableShare}%.` : '',
         `Planning estimate: ${Number(estimateHours).toLocaleString('en-US')} hours returned and ${formattedValue} in capacity value per month.`,
         'Please validate these assumptions against our real workflow and recommend the best first pilot.',
+      ].filter(Boolean).join('\n');
+    }
+
+    const readinessScore = pageParams.get('readiness_score');
+    const readinessLevel = pageParams.get('readiness_level');
+    const recommendedWorkflow = pageParams.get('recommended_workflow');
+    const approvalPoint = pageParams.get('approval_point');
+    const readinessMeasures = pageParams.get('measures');
+    const readinessLevelLabels = {
+      'map-first': 'Map the process before automating',
+      prepare: 'Prepare one workflow for a pilot',
+      'pilot-ready': 'Pilot-ready with one focused workflow',
+    };
+    const readinessWorkflowLabels = {
+      'candidate-intake': 'Candidate intake',
+      'candidate-follow-up': 'Candidate follow-up',
+      'weekly-reporting': 'Weekly reporting',
+      'next-bottleneck-audit': 'Next-bottleneck audit',
+    };
+
+    if (contactMessage && readinessScore && readinessLevel && recommendedWorkflow) {
+      contactMessage.value = [
+        'I completed the CodeSimplr Recruitment Automation Readiness Assessment.',
+        `Readiness score: ${readinessScore}/18 (${readinessLevelLabels[readinessLevel] || readinessLevel}).`,
+        `Recommended first workflow: ${readinessWorkflowLabels[recommendedWorkflow] || recommendedWorkflow}.`,
+        approvalPoint ? `Human approval point: ${approvalPoint}` : '',
+        readinessMeasures ? `Suggested pilot measures: ${readinessMeasures.split('|').join(', ')}.` : '',
+        'Please validate this result against our real systems and process before recommending a pilot.',
       ].filter(Boolean).join('\n');
     }
 
