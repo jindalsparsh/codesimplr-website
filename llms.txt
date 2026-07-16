@@ -1,13 +1,14 @@
 # CodeSimplr
 
-CodeSimplr builds AI automation, workflow automation, conversion-focused websites, SEO growth systems, and career acceleration services for businesses and professionals across the USA, UK, Canada, UAE, India, and remote international markets.
+CodeSimplr builds AI automation, workflow automation, conversion-focused websites, and SEO growth systems for service businesses across the USA, UK, Canada, UAE, India, and remote international markets. A current specialty is practical workflow automation for recruitment and staffing agencies.
 
 ## Primary Offers
 
-- Free Growth & Automation Audit: review of funnel clarity, AI automation opportunities, SEO visibility, and lead capture.
+- Free 3-Point Growth Audit: three practical priorities covering conversion, follow-up automation, and search visibility.
 - AI Automation Agency: AI agents, lead follow-up automation, support automation, recruiter workflows, and reporting systems.
 - Website Design & SEO: service pages, country pages, lead forms, blog structure, structured data, and analytics.
 - n8n Workflow Automation: forms, webhooks, CRM updates, spreadsheets, email, WhatsApp, reporting, and AI workflow steps.
+- Recruitment Automation: candidate intake, screening support, follow-up, and reporting workflows that keep recruiters in control.
 
 ## Key Pages
 
@@ -16,6 +17,7 @@ CodeSimplr builds AI automation, workflow automation, conversion-focused website
 - AI automation agency: https://codesimplr.com/ai-automation-agency
 - Website design and SEO: https://codesimplr.com/website-design-seo
 - n8n workflow automation: https://codesimplr.com/n8n-workflow-automation
+- Recruitment automation: https://codesimplr.com/recruitment-automation
 - Blog: https://codesimplr.com/blog
 - USA services: https://codesimplr.com/usa
 - UK services: https://codesimplr.com/uk

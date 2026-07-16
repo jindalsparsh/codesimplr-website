@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <meta name="theme-color" content="#0A0A0A">
-    <title>CodeSimplr Admin | Signups & Analytics</title>
+    <title>CodeSimplr Admin | Sales Funnel & Analytics</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -24,7 +24,7 @@
     <main class="legal-main">
         <div class="admin-shell">
             <div class="legal-kicker">Backend View</div>
-            <h1 class="legal-title">Signups & Website Analytics</h1>
+            <h1 class="legal-title">Sales Funnel & Website Analytics</h1>
             <p class="legal-intro">
                 Use this page after your Vercel project has `DATABASE_URL` and `SIGNUPS_ADMIN_TOKEN` configured. Enter the token to view contact leads, newsletter signups, and first-party traffic events.
             </p>
@@ -48,6 +48,14 @@
             </form>
 
             <section class="admin-metrics" id="adminMetrics" aria-live="polite">
+                <div class="admin-metric glass admin-metric-goal">
+                    <span id="metricSales">0 / 10</span>
+                    <p>Attributed Sales Won</p>
+                </div>
+                <div class="admin-metric glass">
+                    <span id="metricLeads">0</span>
+                    <p>Contact Leads</p>
+                </div>
                 <div class="admin-metric glass">
                     <span id="metricVisitors">0</span>
                     <p>Unique Visitors</p>
@@ -68,21 +76,22 @@
 
             <section class="admin-grid">
                 <div class="admin-card glass">
-                    <h2>Recent Signups</h2>
+                    <h2>Lead Pipeline</h2>
                     <div class="admin-table-wrap">
                         <table class="admin-table">
                             <thead>
                                 <tr>
                                     <th>Date</th>
                                     <th>Source</th>
-                                    <th>Name</th>
+                                    <th>Lead</th>
                                     <th>Email</th>
-                                    <th>Interest</th>
+                                    <th>Campaign</th>
                                     <th>Offer</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody id="signupRows">
-                                <tr><td colspan="6">Load the dashboard to see signups.</td></tr>
+                                <tr><td colspan="7">Load the dashboard to see signups.</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -143,8 +152,12 @@
         }).format(new Date(value));
       };
 
-      const authFetch = (url, token) => fetch(url, {
-        headers: { Authorization: `Bearer ${token}` },
+      const authFetch = (url, token, options = {}) => fetch(url, {
+        ...options,
+        headers: {
+          ...(options.headers || {}),
+          Authorization: `Bearer ${token}`,
+        },
       }).then(async (response) => {
         const body = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(body.error || `Request failed: ${response.status}`);
@@ -166,10 +179,20 @@
         `).join('');
       };
 
+      const leadStatuses = [
+        ['new', 'New'],
+        ['qualified', 'Qualified'],
+        ['contacted', 'Contacted'],
+        ['discovery', 'Discovery'],
+        ['proposal', 'Proposal'],
+        ['won', 'Won'],
+        ['lost', 'Lost'],
+      ];
+
       const renderSignups = (rows) => {
         const target = document.getElementById('signupRows');
         if (!rows?.length) {
-          target.innerHTML = '<tr><td colspan="6">No signups yet.</td></tr>';
+          target.innerHTML = '<tr><td colspan="7">No signups yet.</td></tr>';
           return;
         }
 
@@ -177,12 +200,45 @@
           <tr>
             <td>${escapeHtml(formatDate(row.created_at))}</td>
             <td>${escapeHtml(row.source)}</td>
-            <td>${escapeHtml(row.name || '-')}</td>
+            <td>${escapeHtml([row.name, row.company].filter(Boolean).join(' · ') || '-')}</td>
             <td>${escapeHtml(row.email)}</td>
-            <td>${escapeHtml(Array.isArray(row.interests) ? row.interests.join(', ') : '-')}</td>
+            <td>${escapeHtml([row.utm_source, row.utm_campaign].filter(Boolean).join(' · ') || 'Direct / unknown')}</td>
             <td>${escapeHtml(row.offer || row.funnel_stage || '-')}</td>
+            <td>
+              <select class="admin-status-select" data-signup-id="${escapeHtml(row.id)}" aria-label="Lead status for ${escapeHtml(row.name || row.email)}">
+                ${leadStatuses.map(([value, label]) => `
+                  <option value="${value}" ${row.lead_status === value ? 'selected' : ''}>${label}</option>
+                `).join('')}
+              </select>
+            </td>
           </tr>
         `).join('');
+
+        target.querySelectorAll('.admin-status-select').forEach((select) => {
+          select.addEventListener('change', () => updateLeadStatus(select));
+        });
+      };
+
+      const updateLeadStatus = async (select) => {
+        const base = baseInput.value.trim().replace(/\/$/, '');
+        const token = tokenInput.value.trim();
+        select.disabled = true;
+        statusEl.textContent = 'Updating lead status...';
+
+        try {
+          await authFetch(`${base}/api/signups`, token, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: Number(select.dataset.signupId),
+              leadStatus: select.value,
+            }),
+          });
+          await loadDashboard();
+        } catch (error) {
+          statusEl.textContent = error.message;
+          select.disabled = false;
+        }
       };
 
       const renderEvents = (rows) => {
@@ -231,9 +287,7 @@
 
       csvLink.addEventListener('click', downloadCsv);
 
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-
+      const loadDashboard = async () => {
         const base = baseInput.value.trim().replace(/\/$/, '');
         const token = tokenInput.value.trim();
         statusEl.textContent = 'Loading dashboard data...';
@@ -249,6 +303,8 @@
           renderList('topReferrers', analytics.topReferrers, 'Mostly direct traffic so far.');
           renderEvents(analytics.events || []);
 
+          document.getElementById('metricSales').textContent = `${signups.summary?.sales_won || 0} / 10`;
+          document.getElementById('metricLeads').textContent = signups.summary?.contact_leads || 0;
           document.getElementById('metricVisitors').textContent = analytics.summary?.unique_visitors || 0;
           document.getElementById('metricViews').textContent = analytics.summary?.page_views || 0;
           document.getElementById('metricCtas').textContent = analytics.summary?.cta_clicks || 0;
@@ -258,6 +314,11 @@
         } catch (error) {
           statusEl.textContent = error.message;
         }
+      };
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        await loadDashboard();
       });
     </script>
 </body>
