@@ -2177,6 +2177,410 @@ input, textarea, select {
   margin-top: 2rem;
 }
 
+/* Recruitment automation ROI calculator */
+.roi-page {
+  background:
+    radial-gradient(circle at 88% 22%, rgba(196, 216, 46, 0.045), transparent 28%),
+    var(--clr-bg-primary);
+}
+
+.roi-main {
+  padding: 118px var(--section-pad-x) 72px;
+}
+
+.roi-shell {
+  width: min(1320px, 100%);
+  margin: 0 auto;
+}
+
+.roi-nav-cta {
+  padding: 0.5rem 1.35rem;
+  font-size: 0.84rem;
+}
+
+.roi-hero {
+  max-width: 900px;
+  margin-bottom: 2rem;
+}
+
+.roi-hero h1 {
+  max-width: 880px;
+  font-size: clamp(2.35rem, 3.7vw, 3.3rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+}
+
+.roi-hero p {
+  max-width: 680px;
+  margin-top: 1rem;
+  color: var(--clr-text-secondary);
+  font-size: 1.02rem;
+  line-height: 1.65;
+}
+
+.roi-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.03fr) minmax(0, 0.97fr);
+  gap: 2rem;
+  align-items: stretch;
+}
+
+.roi-calculator,
+.roi-results {
+  padding: 1.65rem;
+  border-color: rgba(255, 255, 255, 0.13);
+}
+
+.roi-calculator label,
+.roi-workload h2 {
+  display: block;
+  color: var(--clr-text-primary);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.roi-workflow-field {
+  margin-bottom: 0.6rem;
+}
+
+.roi-workflow-field select {
+  width: 100%;
+  margin-top: 0.65rem;
+  padding: 0.82rem 1rem;
+  color: var(--clr-text-primary);
+  background: var(--clr-bg-secondary);
+  border: 1px solid var(--clr-lime);
+  border-radius: var(--radius-sm);
+  font-size: 0.96rem;
+}
+
+.roi-workflow-field select option {
+  color: var(--clr-text-primary);
+  background: var(--clr-bg-secondary);
+}
+
+.roi-control {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.82fr) minmax(240px, 1.18fr);
+  gap: 1.2rem;
+  align-items: center;
+  padding: 0.82rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.roi-control-copy p,
+.roi-form-note,
+.roi-pilot-note,
+.roi-method p,
+.roi-pilot p,
+.roi-disclaimer {
+  color: var(--clr-text-secondary);
+}
+
+.roi-control-copy p {
+  margin-top: 0.18rem;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.roi-control-inputs {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: center;
+}
+
+.roi-number-field {
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+  overflow: hidden;
+  color: var(--clr-text-secondary);
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: var(--radius-sm);
+}
+
+.roi-number-field span {
+  padding: 0 0.65rem;
+  font-size: 0.84rem;
+}
+
+.roi-number-field input {
+  min-width: 0;
+  width: 100%;
+  padding: 0.65rem 0.35rem;
+  color: var(--clr-text-primary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-align: center;
+  -moz-appearance: textfield;
+}
+
+.roi-number-field input::-webkit-outer-spin-button,
+.roi-number-field input::-webkit-inner-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
+}
+
+.roi-range-row {
+  display: grid;
+  grid-template-columns: max-content minmax(76px, 1fr) max-content;
+  gap: 0.65rem;
+  align-items: center;
+  color: var(--clr-text-secondary);
+  font-size: 0.75rem;
+}
+
+.roi-range-row input[type="range"] {
+  width: 100%;
+  height: 4px;
+  accent-color: var(--clr-lime);
+  cursor: pointer;
+}
+
+.roi-form-note {
+  margin-top: 1.15rem;
+  font-size: 0.82rem;
+}
+
+.roi-results {
+  display: flex;
+  flex-direction: column;
+}
+
+.roi-results-label {
+  margin-bottom: 0.35rem;
+  color: var(--clr-text-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.roi-hours {
+  color: var(--clr-lime);
+  font-size: clamp(2.45rem, 5vw, 4.8rem);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.roi-hours strong {
+  font: inherit;
+}
+
+.roi-result-caption {
+  color: var(--clr-text-primary);
+  font-size: clamp(1.25rem, 2vw, 1.8rem);
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.roi-result-divider {
+  height: 1px;
+  margin: 1.3rem 0;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.roi-value {
+  color: var(--clr-lime);
+  font-size: clamp(2rem, 4vw, 3.6rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.roi-value-caption {
+  color: var(--clr-text-primary);
+  font-size: 1.08rem;
+  font-weight: 500;
+}
+
+.roi-workload {
+  margin-top: 1.7rem;
+}
+
+.roi-workload h2 {
+  margin-bottom: 0.8rem;
+}
+
+.roi-bar-row {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) 68px;
+  gap: 0.8rem;
+  align-items: center;
+  margin: 0.55rem 0;
+  color: var(--clr-text-secondary);
+  font-size: 0.8rem;
+}
+
+.roi-bar-track {
+  height: 20px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.roi-bar {
+  display: block;
+  height: 100%;
+  transition: width var(--transition-base);
+}
+
+.roi-bar-before {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.roi-bar-after {
+  width: 60%;
+  background: var(--clr-lime);
+}
+
+.roi-pilot-note {
+  margin: 1.3rem 0 1rem;
+  font-size: 0.88rem;
+}
+
+.roi-whatsapp {
+  justify-content: center;
+  width: min(100%, 420px);
+}
+
+.roi-text-link,
+.roi-copy-link {
+  align-self: flex-start;
+  color: var(--clr-lime);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.roi-text-link {
+  margin-top: 0.8rem;
+}
+
+.roi-copy-link {
+  align-self: stretch;
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+}
+
+.roi-copy-status {
+  min-height: 1.35rem;
+  margin-top: 0.35rem;
+  color: var(--clr-text-secondary);
+  font-size: 0.78rem;
+}
+
+.roi-lower {
+  display: grid;
+  grid-template-columns: minmax(0, 2.1fr) minmax(300px, 0.9fr);
+  gap: 2rem;
+  align-items: stretch;
+}
+
+.roi-method {
+  margin-top: 2.4rem;
+}
+
+.roi-method > h2,
+.roi-pilot h2 {
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  line-height: 1.15;
+}
+
+.roi-method-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  margin-top: 1.2rem;
+}
+
+.roi-method-list li {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 0.8rem;
+  padding-right: 1.5rem;
+}
+
+.roi-method-list li + li {
+  padding-left: 1.5rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.roi-method-list li > span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: var(--clr-lime);
+  border: 1px solid var(--clr-lime);
+  border-radius: 50%;
+  font-size: 0.78rem;
+}
+
+.roi-method h3 {
+  margin-bottom: 0.3rem;
+  font-size: 0.98rem;
+}
+
+.roi-method p {
+  font-size: 0.85rem;
+  line-height: 1.65;
+}
+
+.roi-pilot {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 2.4rem;
+  padding: 1.6rem 1.8rem;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.roi-pilot p {
+  margin-top: 0.55rem;
+}
+
+.roi-pilot .btn {
+  flex: 0 0 auto;
+  justify-content: center;
+  width: 100%;
+}
+
+@media (min-width: 993px) {
+  .roi-pilot {
+    padding: 1rem 0 1rem 2rem;
+    background: transparent;
+    border: 0;
+    border-left: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 0;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .roi-pilot .btn {
+    width: auto;
+  }
+}
+
+.roi-disclaimer {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+.roi-page :is(a, button, input, select):focus-visible {
+  outline: 3px solid rgba(196, 216, 46, 0.45);
+  outline-offset: 3px;
+}
+
 .blog-shell {
   width: min(1120px, 100%);
 }
@@ -2565,6 +2969,18 @@ input, textarea, select {
     grid-template-columns: 1fr;
   }
 
+  .roi-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .roi-lower {
+    grid-template-columns: 1fr;
+  }
+
+  .roi-results {
+    min-height: 650px;
+  }
+
   .markets-grid,
   .blog-grid,
   .reviews-grid { grid-template-columns: repeat(2, 1fr); }
@@ -2681,6 +3097,30 @@ input, textarea, select {
   .markets-grid,
   .blog-grid,
   .reviews-grid { grid-template-columns: 1fr; }
+
+  .roi-main {
+    padding-top: 102px;
+  }
+
+  .roi-hero h1 {
+    font-size: clamp(2.15rem, 9vw, 3.2rem);
+  }
+
+  .roi-method-list {
+    grid-template-columns: 1fr;
+    gap: 1.4rem;
+  }
+
+  .roi-method-list li,
+  .roi-method-list li + li {
+    padding: 0;
+    border-left: 0;
+  }
+
+  .roi-pilot {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
 
 /* ————————————————————————————————————————————————————————————
@@ -2697,6 +3137,63 @@ input, textarea, select {
   .hero-badge { font-size: 0.72rem; padding: 0.35rem 1rem; }
   .section-title { font-size: clamp(1.4rem, 5vw, 2rem); }
   .service-tabs { gap: 0.4rem; }
+
+  .roi-main {
+    padding-top: 96px;
+  }
+
+  .roi-hero {
+    margin-bottom: 1.5rem;
+  }
+
+  .roi-hero h1 {
+    font-size: clamp(2rem, 10.5vw, 2.8rem);
+    line-height: 1.06;
+  }
+
+  .roi-calculator,
+  .roi-results {
+    padding: 1.35rem;
+  }
+
+  .roi-control {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+  }
+
+  .roi-control-inputs {
+    grid-template-columns: 84px minmax(0, 1fr);
+    gap: 0.65rem;
+  }
+
+  .roi-range-row {
+    gap: 0.45rem;
+  }
+
+  .roi-results {
+    min-height: 0;
+  }
+
+  .roi-hours {
+    font-size: clamp(2.65rem, 14vw, 4rem);
+  }
+
+  .roi-bar-row {
+    grid-template-columns: 46px minmax(0, 1fr) 60px;
+    gap: 0.55rem;
+  }
+
+  .roi-copy-link {
+    margin-top: 1rem;
+  }
+
+  .roi-pilot {
+    padding: 1.35rem;
+  }
+
+  .roi-pilot .btn {
+    width: 100%;
+  }
 
   .tab-btn {
     padding: 0.5rem 1rem;

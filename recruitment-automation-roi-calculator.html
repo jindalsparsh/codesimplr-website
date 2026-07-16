@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Estimate the recruiter admin hours and monthly capacity value a focused recruitment automation workflow could return using your own team inputs.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="theme-color" content="#0A0A0A">
+    <link rel="canonical" href="https://codesimplr.com/recruitment-automation-roi-calculator">
+    <meta property="og:title" content="Recruitment Automation ROI Calculator | CodeSimplr">
+    <meta property="og:description" content="Model one repeated recruitment workflow, estimate the admin time it could return, and send the assumptions to CodeSimplr for a free workflow audit.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://codesimplr.com/recruitment-automation-roi-calculator">
+    <title>Recruitment Automation ROI Calculator | CodeSimplr</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "CodeSimplr Recruitment Automation ROI Calculator",
+      "url": "https://codesimplr.com/recruitment-automation-roi-calculator",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Any",
+      "description": "A planning calculator for recruitment and staffing agencies to estimate the monthly admin time and capacity value a focused workflow automation could return.",
+      "provider": {
+        "@type": "Organization",
+        "name": "CodeSimplr",
+        "url": "https://codesimplr.com/"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+</head>
+<body class="legal-page roi-page">
+    <nav class="navbar scrolled">
+        <div class="container nav-container">
+            <a href="index.html#hero" class="nav-logo" aria-label="CodeSimplr home">
+                <span class="logo-brackets">&lt;</span><span class="logo-code">code</span><span class="logo-slash">/</span><span class="logo-simplr">simplr</span><span class="logo-brackets">&gt;</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="recruitment-automation.html" class="nav-link">Recruitment Automation</a></li>
+                <li><a href="blog/recruitment-automation-workflows-staffing-agencies.html" class="nav-link">Workflow Guide</a></li>
+            </ul>
+            <a href="contact.html?offer=recruitment-automation-audit&amp;stage=roi-calculator" class="nav-cta btn btn-secondary roi-nav-cta" data-track="roi_nav_audit">Free Audit</a>
+        </div>
+    </nav>
+
+    <main class="roi-main">
+        <section class="roi-shell">
+            <header class="roi-hero">
+                <h1>Estimate the admin time your recruiters could reclaim</h1>
+                <p>Adjust four inputs to model one repeated workflow. The estimate uses your numbers and is not a promise of results.</p>
+            </header>
+
+            <div class="roi-workspace">
+                <form class="roi-calculator glass" id="recruitmentRoiCalculator">
+                    <div class="roi-workflow-field">
+                        <label for="roiWorkflow">Workflow to model</label>
+                        <select id="roiWorkflow" name="workflow">
+                            <option value="candidate-intake">Candidate intake</option>
+                            <option value="candidate-follow-up">Candidate follow-up</option>
+                            <option value="weekly-reporting">Weekly reporting</option>
+                            <option value="job-description-preparation">Job-description preparation</option>
+                        </select>
+                    </div>
+
+                    <div class="roi-control">
+                        <div class="roi-control-copy">
+                            <label for="roiRecruiters">Recruiters</label>
+                            <p>Number of recruiters using this workflow.</p>
+                        </div>
+                        <div class="roi-control-inputs">
+                            <div class="roi-number-field">
+                                <input type="number" id="roiRecruiters" name="recruiters" min="1" max="50" step="1" value="8" inputmode="numeric">
+                            </div>
+                            <div class="roi-range-row">
+                                <span>1</span>
+                                <input type="range" id="roiRecruitersRange" min="1" max="50" step="1" value="8" aria-label="Recruiters slider">
+                                <span>50+</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="roi-control">
+                        <div class="roi-control-copy">
+                            <label for="roiAdminHours">Admin hours per recruiter / week</label>
+                            <p>Average hours spent on this workflow per recruiter.</p>
+                        </div>
+                        <div class="roi-control-inputs">
+                            <div class="roi-number-field">
+                                <input type="number" id="roiAdminHours" name="adminHours" min="1" max="40" step="1" value="6" inputmode="numeric">
+                                <span>hrs</span>
+                            </div>
+                            <div class="roi-range-row">
+                                <span>1</span>
+                                <input type="range" id="roiAdminHoursRange" min="1" max="40" step="1" value="6" aria-label="Admin hours per recruiter per week slider">
+                                <span>40+</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="roi-control">
+                        <div class="roi-control-copy">
+                            <label for="roiHourlyCost">Loaded hourly cost</label>
+                            <p>Fully loaded cost of a recruiter per hour.</p>
+                        </div>
+                        <div class="roi-control-inputs">
+                            <div class="roi-number-field">
+                                <span>$</span>
+                                <input type="number" id="roiHourlyCost" name="hourlyCost" min="10" max="200" step="5" value="45" inputmode="decimal">
+                            </div>
+                            <div class="roi-range-row">
+                                <span>$10</span>
+                                <input type="range" id="roiHourlyCostRange" min="10" max="200" step="5" value="45" aria-label="Loaded hourly cost slider">
+                                <span>$200+</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="roi-control">
+                        <div class="roi-control-copy">
+                            <label for="roiAddressableShare">Addressable share of admin work</label>
+                            <p>Portion of this workflow that could be improved.</p>
+                        </div>
+                        <div class="roi-control-inputs">
+                            <div class="roi-number-field">
+                                <input type="number" id="roiAddressableShare" name="addressableShare" min="10" max="100" step="5" value="40" inputmode="numeric">
+                                <span>%</span>
+                            </div>
+                            <div class="roi-range-row">
+                                <span>10%</span>
+                                <input type="range" id="roiAddressableShareRange" min="10" max="100" step="5" value="40" aria-label="Addressable share of admin work slider">
+                                <span>100%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="roi-form-note">Adjust the inputs to see how changes impact your monthly estimate.</p>
+                </form>
+
+                <section class="roi-results glass" aria-labelledby="roiResultsTitle" aria-live="polite">
+                    <p class="roi-results-label" id="roiResultsTitle">Your estimate</p>
+                    <p class="roi-hours"><strong id="roiHoursReturned">83</strong> hours</p>
+                    <p class="roi-result-caption">returned / month</p>
+
+                    <div class="roi-result-divider"></div>
+
+                    <p class="roi-value" id="roiCapacityValue">$3,741</p>
+                    <p class="roi-value-caption">estimated capacity value / month</p>
+
+                    <div class="roi-workload">
+                        <h2>Monthly workload</h2>
+                        <div class="roi-bar-row">
+                            <span>Before</span>
+                            <div class="roi-bar-track"><span class="roi-bar roi-bar-before" id="roiBeforeBar"></span></div>
+                            <span id="roiBeforeHours">208 hrs</span>
+                        </div>
+                        <div class="roi-bar-row">
+                            <span>After</span>
+                            <div class="roi-bar-track"><span class="roi-bar roi-bar-after" id="roiAfterBar"></span></div>
+                            <span id="roiAfterHours">125 hrs</span>
+                        </div>
+                    </div>
+
+                    <p class="roi-pilot-note">A 14-day pilot can test one workflow against your current baseline.</p>
+                    <button type="button" class="btn btn-primary roi-whatsapp" id="roiWhatsapp" data-track="roi_whatsapp_estimate">
+                        Send My Estimate on WhatsApp
+                    </button>
+                    <a href="contact.html?offer=recruitment-automation-audit&amp;stage=roi-calculator" class="roi-text-link" id="roiAuditLink" data-track="roi_audit_estimate">Get a Free Workflow Audit <span aria-hidden="true">&rarr;</span></a>
+                    <button type="button" class="roi-copy-link" id="roiCopyLink" data-track="roi_copy_share">Copy share link</button>
+                    <p class="roi-copy-status" id="roiCopyStatus" role="status"></p>
+                </section>
+            </div>
+
+            <div class="roi-lower">
+                <section class="roi-method" aria-labelledby="roiMethodTitle">
+                    <h2 id="roiMethodTitle">How this estimate works</h2>
+                    <ol class="roi-method-list">
+                        <li>
+                            <span>1</span>
+                            <div><h3>Your team inputs</h3><p>Add your team size, weekly admin hours, loaded hourly cost, and the share of work that can be improved.</p></div>
+                        </li>
+                        <li>
+                            <span>2</span>
+                            <div><h3>Addressable work</h3><p>We apply the addressable share to the admin hours to isolate the portion this workflow could return.</p></div>
+                        </li>
+                        <li>
+                            <span>3</span>
+                            <div><h3>Monthly estimate</h3><p>We convert weekly hours to a monthly total and value it using your loaded hourly cost.</p></div>
+                        </li>
+                    </ol>
+                </section>
+
+                <section class="roi-pilot glass">
+                    <div>
+                        <h2>Turn the estimate into a measured pilot</h2>
+                        <p>Test one workflow in 14 days against your current baseline. You keep the data.</p>
+                    </div>
+                    <a href="contact.html?offer=recruitment-automation-pilot&amp;stage=roi-calculator" class="btn btn-primary" id="roiPilotLink" data-track="roi_scope_pilot">Scope the 14-Day Pilot</a>
+                </section>
+            </div>
+
+            <p class="roi-disclaimer">Planning estimate only. Validate against real workflow data before making an investment decision.</p>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
