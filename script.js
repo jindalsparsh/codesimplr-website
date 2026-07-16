@@ -103,8 +103,65 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  const VERCEL_EVENT_FIELDS = new Set([
+    'action',
+    'addressableShare',
+    'adminHours',
+    'answer',
+    'destination',
+    'estimatedHours',
+    'estimatedValue',
+    'funnelStage',
+    'interests',
+    'label',
+    'offer',
+    'question',
+    'questionNumber',
+    'readinessLevel',
+    'recruiters',
+    'recommendedWorkflow',
+    'score',
+    'source',
+    'workflow',
+  ]);
+
+  const getAnalyticsDestination = (href) => {
+    if (!href) return '';
+
+    try {
+      const url = new URL(href, window.location.href);
+      return url.origin === window.location.origin ? url.pathname : url.hostname;
+    } catch {
+      return '';
+    }
+  };
+
+  const trackVercelEvent = (eventType, metadata) => {
+    if (eventType === 'page_view' || typeof window.va !== 'function') return;
+
+    const safeMetadata = {
+      ...metadata,
+      destination: getAnalyticsDestination(metadata.href),
+    };
+    delete safeMetadata.href;
+
+    const data = Object.fromEntries(
+      Object.entries(safeMetadata)
+        .filter(([key, value]) => VERCEL_EVENT_FIELDS.has(key) && ['string', 'number', 'boolean'].includes(typeof value))
+        .map(([key, value]) => [key, typeof value === 'string' ? value.slice(0, 120) : value])
+        .filter(([, value]) => value !== '')
+    );
+
+    window.va('event', {
+      name: String(eventType).slice(0, 120),
+      ...(Object.keys(data).length ? { data } : {}),
+    });
+  };
+
   const trackEvent = (eventType, metadata = {}) => {
     if (window.location.protocol === 'file:') return Promise.resolve(false);
+
+    trackVercelEvent(eventType, metadata);
 
     const attribution = getCampaignAttribution();
     return fetch('/api/events', {
@@ -421,6 +478,20 @@ document.addEventListener('DOMContentLoaded', () => {
       return model;
     };
 
+    const trackEstimateAction = (action) => {
+      const model = render();
+      trackEvent('roi_estimate_action', {
+        action,
+        workflow: model.workflow,
+        recruiters: model.recruiters,
+        adminHours: model.adminHours,
+        addressableShare: model.addressableShare,
+        estimatedHours: Math.round(model.returnedHours),
+        estimatedValue: Math.round(model.monthlyCapacityValue),
+      });
+      return model;
+    };
+
     controlPairs.forEach((pair) => {
       const incoming = pageParams.get(pair.query);
       if (incoming !== null) {
@@ -457,9 +528,12 @@ document.addEventListener('DOMContentLoaded', () => {
     workflow.addEventListener('change', render);
 
     whatsappButton.addEventListener('click', () => {
-      render();
+      trackEstimateAction('whatsapp');
       openWhatsapp(whatsappButton.dataset.message);
     });
+
+    auditLink.addEventListener('click', () => trackEstimateAction('audit'));
+    pilotLink.addEventListener('click', () => trackEstimateAction('pilot'));
 
     copyButton.addEventListener('click', async () => {
       const url = copyButton.dataset.shareUrl;
@@ -487,6 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       copyStatus.textContent = copied ? 'Share link copied.' : 'Copy failed. Select the address from your browser instead.';
+      if (copied) trackEstimateAction('copy-share');
       setTimeout(() => { copyStatus.textContent = ''; }, 3500);
     });
 
@@ -746,6 +821,17 @@ document.addEventListener('DOMContentLoaded', () => {
       'I would like a free workflow audit to validate this result against our real systems and process.',
     ].join('\n');
 
+    const trackConversionAction = (action) => {
+      if (!activeResult) return;
+
+      trackEvent('assessment_conversion_action', {
+        action,
+        score: activeResult.score,
+        readinessLevel: activeResult.level.key,
+        recommendedWorkflow: activeResult.workflow.slug,
+      });
+    };
+
     const syncAnswerQuery = () => {
       const url = new URL(window.location.href);
       questions.forEach((question, index) => url.searchParams.set(`q${index + 1}`, answers[index]));
@@ -847,8 +933,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     whatsappButton.addEventListener('click', () => {
       if (!activeResult) return;
+      trackConversionAction('whatsapp');
       openWhatsapp(whatsappButton.dataset.message);
     });
+
+    auditLink.addEventListener('click', () => trackConversionAction('audit'));
 
     copyButton.addEventListener('click', async () => {
       const url = copyButton.dataset.shareUrl;
@@ -876,6 +965,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       copyStatus.textContent = copied ? 'Share link copied.' : 'Copy failed. Select the address from your browser instead.';
+      if (copied) trackConversionAction('copy-share');
       setTimeout(() => { copyStatus.textContent = ''; }, 3500);
     });
 
