@@ -698,7 +698,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const workflowSummary = document.getElementById('readinessWorkflowSummary');
     const approvalEl = document.getElementById('readinessApproval');
     const measuresEl = document.getElementById('readinessMeasures');
-    const whatsappButton = document.getElementById('readinessWhatsapp');
+    const leadForm = document.getElementById('readinessLeadForm');
+    const leadName = document.getElementById('readinessLeadName');
+    const leadCompany = document.getElementById('readinessLeadCompany');
+    const leadEmail = document.getElementById('readinessLeadEmail');
+    const leadStatus = document.getElementById('readinessLeadStatus');
     const auditLink = document.getElementById('readinessAuditLink');
     const copyButton = document.getElementById('readinessCopy');
     const copyStatus = document.getElementById('readinessCopyStatus');
@@ -811,15 +815,22 @@ document.addEventListener('DOMContentLoaded', () => {
       return url.toString();
     };
 
-    const buildWhatsappMessage = (result) => [
+    const buildWhatsappMessage = (result, lead = {}) => {
+      const attribution = getCampaignAttribution();
+      return [
       'Hi CodeSimplr! I completed the Recruitment Automation Readiness Assessment.',
+      lead.name ? `Name: ${lead.name}` : '',
+      lead.email ? `Business email: ${lead.email}` : '',
+      lead.company ? `Agency: ${lead.company}` : '',
       `Readiness score: ${result.score}/18`,
       `Readiness level: ${result.level.title}`,
       `Recommended first workflow: ${result.workflow.title}`,
       `Human approval point: ${result.workflow.approval}`,
       `Pilot measures: ${result.workflow.measures.join(', ')}`,
+      attribution.utmSource ? `Campaign source: ${attribution.utmSource}${attribution.utmMedium ? ` / ${attribution.utmMedium}` : ''}${attribution.utmCampaign ? ` / ${attribution.utmCampaign}` : ''}` : '',
       'I would like a free workflow audit to validate this result against our real systems and process.',
-    ].join('\n');
+      ].filter(Boolean).join('\n');
+    };
 
     const trackConversionAction = (action) => {
       if (!activeResult) return;
@@ -860,7 +871,6 @@ document.addEventListener('DOMContentLoaded', () => {
         item.textContent = measure;
         return item;
       }));
-      whatsappButton.dataset.message = buildWhatsappMessage(result);
       auditLink.href = buildContactUrl(result);
       copyButton.dataset.shareUrl = buildShareUrl();
       syncAnswerQuery();
@@ -921,6 +931,9 @@ document.addEventListener('DOMContentLoaded', () => {
       answers.fill('');
       currentIndex = 0;
       activeResult = null;
+      leadForm.reset();
+      leadStatus.textContent = '';
+      [leadName, leadEmail].forEach((input) => input.classList.remove('error'));
       const url = new URL(window.location.href);
       questions.forEach((question, index) => url.searchParams.delete(`q${index + 1}`));
       window.history.replaceState(null, '', url);
@@ -931,10 +944,62 @@ document.addEventListener('DOMContentLoaded', () => {
       trackEvent('assessment_retake');
     });
 
-    whatsappButton.addEventListener('click', () => {
+    leadForm.addEventListener('submit', (event) => {
+      event.preventDefault();
       if (!activeResult) return;
-      trackConversionAction('whatsapp');
-      openWhatsapp(whatsappButton.dataset.message);
+
+      const name = leadName.value.trim();
+      const email = leadEmail.value.trim();
+      const company = leadCompany.value.trim();
+      const website = leadForm.querySelector('[name="website"]')?.value.trim();
+      const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+      [leadName, leadEmail].forEach((input) => input.classList.remove('error'));
+      if (!name || !validEmail) {
+        if (!name) leadName.classList.add('error');
+        if (!validEmail) leadEmail.classList.add('error');
+        leadStatus.textContent = 'Add your name and a valid business email to continue.';
+        (name ? leadEmail : leadName).focus();
+        return;
+      }
+
+      const message = buildWhatsappMessage(activeResult, { name, email, company });
+      const savePromise = saveSignup({
+        source: 'contact',
+        name,
+        email,
+        company,
+        interests: ['AI Automation', 'Lead Tracking'],
+        offer: 'recruitment-readiness-review',
+        funnelStage: 'assessment-result',
+        message,
+        website,
+      });
+
+      trackEvent('form_submit', {
+        source: 'readiness-result',
+        offer: 'recruitment-readiness-review',
+        funnelStage: 'assessment-result',
+        score: activeResult.score,
+        readinessLevel: activeResult.level.key,
+        recommendedWorkflow: activeResult.workflow.slug,
+      });
+      trackConversionAction('review-request');
+      leadStatus.textContent = 'Opening WhatsApp with your review request…';
+      openWhatsapp(message);
+
+      savePromise.then((saved) => {
+        leadStatus.textContent = saved
+          ? 'Request saved. Review the prefilled WhatsApp message and send it to continue.'
+          : 'WhatsApp has your request. Review the prefilled message and send it to continue.';
+      });
+    });
+
+    [leadName, leadEmail].forEach((input) => {
+      input.addEventListener('input', () => {
+        input.classList.remove('error');
+        if (leadStatus.textContent.startsWith('Add your name')) leadStatus.textContent = '';
+      });
     });
 
     auditLink.addEventListener('click', () => trackConversionAction('audit'));

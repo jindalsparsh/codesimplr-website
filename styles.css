@@ -3060,10 +3060,92 @@ input, textarea, select {
   transform: translateY(-50%);
 }
 
-.readiness-whatsapp {
+.readiness-lead-form {
+  margin-top: 1.3rem;
+  padding: 1rem;
+  background: rgba(196, 216, 46, 0.06);
+  border: 1px solid rgba(196, 216, 46, 0.35);
+  border-radius: var(--radius-sm);
+}
+
+.readiness-lead-heading h3 {
+  color: var(--clr-text-primary);
+  font-size: 1rem;
+}
+
+.readiness-lead-heading p,
+.readiness-lead-note {
+  color: var(--clr-text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.readiness-lead-heading p {
+  margin-top: 0.35rem;
+}
+
+.readiness-lead-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+}
+
+.readiness-lead-field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.readiness-lead-email {
+  grid-column: 1 / -1;
+}
+
+.readiness-lead-field label {
+  color: var(--clr-text-secondary);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.readiness-lead-field input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.72rem 0.8rem;
+  color: var(--clr-text-primary);
+  background: rgba(10, 10, 10, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-xs);
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.readiness-lead-field input:focus {
+  outline: none;
+  border-color: var(--clr-lime);
+  box-shadow: 0 0 0 3px rgba(196, 216, 46, 0.12);
+}
+
+.readiness-lead-field input.error {
+  border-color: #f87171;
+}
+
+.readiness-lead-submit {
   justify-content: center;
   width: 100%;
-  margin-top: 1.3rem;
+  min-height: 48px;
+  margin-top: 0.85rem;
+}
+
+.readiness-lead-note {
+  margin-top: 0.65rem;
+}
+
+.readiness-lead-status {
+  min-height: 1.25rem;
+  margin-top: 0.45rem;
+  color: var(--clr-lime);
+  font-size: 0.78rem;
+  line-height: 1.45;
 }
 
 .readiness-recommendation > .readiness-text-link {
@@ -3831,8 +3913,12 @@ input, textarea, select {
     font-size: 0.72rem;
   }
 
-  .readiness-whatsapp {
-    min-height: 48px;
+  .readiness-lead-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .readiness-lead-email {
+    grid-column: auto;
   }
 
   .tab-btn {
