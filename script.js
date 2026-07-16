@@ -286,6 +286,216 @@ document.addEventListener('DOMContentLoaded', () => {
   initServiceTabs();
 
   /* ----------------------------------------------------------
+     RECRUITMENT AUTOMATION ROI CALCULATOR
+     ---------------------------------------------------------- */
+  const initRecruitmentRoiCalculator = () => {
+    const form = document.getElementById('recruitmentRoiCalculator');
+    if (!form) return;
+
+    const workflow = document.getElementById('roiWorkflow');
+    const hoursReturned = document.getElementById('roiHoursReturned');
+    const capacityValue = document.getElementById('roiCapacityValue');
+    const beforeHours = document.getElementById('roiBeforeHours');
+    const afterHours = document.getElementById('roiAfterHours');
+    const afterBar = document.getElementById('roiAfterBar');
+    const whatsappButton = document.getElementById('roiWhatsapp');
+    const auditLink = document.getElementById('roiAuditLink');
+    const pilotLink = document.getElementById('roiPilotLink');
+    const copyButton = document.getElementById('roiCopyLink');
+    const copyStatus = document.getElementById('roiCopyStatus');
+    const pageParams = new URLSearchParams(window.location.search);
+    const monthFactor = 4.33;
+    const currency = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0,
+    });
+    const number = new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 });
+
+    const controlPairs = [
+      {
+        number: document.getElementById('roiRecruiters'),
+        range: document.getElementById('roiRecruitersRange'),
+        query: 'recruiters',
+      },
+      {
+        number: document.getElementById('roiAdminHours'),
+        range: document.getElementById('roiAdminHoursRange'),
+        query: 'admin_hours',
+      },
+      {
+        number: document.getElementById('roiHourlyCost'),
+        range: document.getElementById('roiHourlyCostRange'),
+        query: 'cost',
+      },
+      {
+        number: document.getElementById('roiAddressableShare'),
+        range: document.getElementById('roiAddressableShareRange'),
+        query: 'share',
+      },
+    ];
+
+    const clamp = (value, input) => {
+      const parsed = Number(value);
+      const fallback = Number(input.defaultValue);
+      if (!Number.isFinite(parsed)) return fallback;
+      return Math.min(Number(input.max), Math.max(Number(input.min), parsed));
+    };
+
+    const readModel = () => {
+      const recruiters = clamp(controlPairs[0].number.value, controlPairs[0].number);
+      const adminHours = clamp(controlPairs[1].number.value, controlPairs[1].number);
+      const hourlyCost = clamp(controlPairs[2].number.value, controlPairs[2].number);
+      const addressableShare = clamp(controlPairs[3].number.value, controlPairs[3].number);
+      const monthlyAdminHours = recruiters * adminHours * monthFactor;
+      const returnedHours = monthlyAdminHours * (addressableShare / 100);
+      const remainingHours = Math.max(0, monthlyAdminHours - returnedHours);
+
+      return {
+        workflow: workflow.value,
+        workflowLabel: workflow.options[workflow.selectedIndex]?.text || 'Candidate intake',
+        recruiters,
+        adminHours,
+        hourlyCost,
+        addressableShare,
+        monthlyAdminHours,
+        returnedHours,
+        remainingHours,
+        monthlyCapacityValue: returnedHours * hourlyCost,
+      };
+    };
+
+    const buildContactUrl = (offer, model) => {
+      const params = new URLSearchParams({
+        offer,
+        stage: 'roi-calculator',
+        interest: 'ai,tracking',
+        workflow: model.workflow,
+        recruiters: String(model.recruiters),
+        admin_hours: String(model.adminHours),
+        cost: String(model.hourlyCost),
+        share: String(model.addressableShare),
+        estimate_hours: String(Math.round(model.returnedHours)),
+        estimate_value: String(Math.round(model.monthlyCapacityValue)),
+      });
+      return `contact.html?${params.toString()}`;
+    };
+
+    const buildShareUrl = (model) => {
+      const url = new URL(window.location.href);
+      url.search = '';
+      url.hash = '';
+      url.searchParams.set('workflow', model.workflow);
+      url.searchParams.set('recruiters', model.recruiters);
+      url.searchParams.set('admin_hours', model.adminHours);
+      url.searchParams.set('cost', model.hourlyCost);
+      url.searchParams.set('share', model.addressableShare);
+      url.searchParams.set('utm_source', 'calculator-share');
+      url.searchParams.set('utm_medium', 'referral');
+      url.searchParams.set('utm_campaign', 'recruitment-roi-calculator');
+      return url.toString();
+    };
+
+    const buildEstimateMessage = (model) => [
+      'Hi CodeSimplr! I used the recruitment automation ROI calculator.',
+      `Workflow: ${model.workflowLabel}`,
+      `Team: ${model.recruiters} recruiters`,
+      `Current admin time: ${model.adminHours} hours per recruiter / week`,
+      `Addressable share: ${model.addressableShare}%`,
+      `Estimate: ${number.format(Math.round(model.returnedHours))} hours returned / month`,
+      `Estimated capacity value: ${currency.format(Math.round(model.monthlyCapacityValue))} / month`,
+      'I would like a free workflow audit to validate these assumptions against our real process.',
+    ].join('\n');
+
+    const render = () => {
+      const model = readModel();
+      hoursReturned.textContent = number.format(Math.round(model.returnedHours));
+      capacityValue.textContent = currency.format(Math.round(model.monthlyCapacityValue));
+      beforeHours.textContent = `${number.format(Math.round(model.monthlyAdminHours))} hrs`;
+      afterHours.textContent = `${number.format(Math.round(model.remainingHours))} hrs`;
+      afterBar.style.width = `${Math.max(0, Math.min(100, (model.remainingHours / model.monthlyAdminHours) * 100))}%`;
+      auditLink.href = buildContactUrl('recruitment-automation-audit', model);
+      pilotLink.href = buildContactUrl('recruitment-automation-pilot', model);
+      whatsappButton.dataset.message = buildEstimateMessage(model);
+      copyButton.dataset.shareUrl = buildShareUrl(model);
+      return model;
+    };
+
+    controlPairs.forEach((pair) => {
+      const incoming = pageParams.get(pair.query);
+      if (incoming !== null) {
+        const value = clamp(incoming, pair.number);
+        pair.number.value = value;
+        pair.range.value = value;
+      }
+
+      pair.range.addEventListener('input', () => {
+        pair.number.value = pair.range.value;
+        render();
+      });
+
+      pair.number.addEventListener('input', () => {
+        if (pair.number.value === '') return;
+        const value = clamp(pair.number.value, pair.number);
+        pair.range.value = value;
+        render();
+      });
+
+      pair.number.addEventListener('change', () => {
+        const value = clamp(pair.number.value, pair.number);
+        pair.number.value = value;
+        pair.range.value = value;
+        render();
+      });
+    });
+
+    const incomingWorkflow = pageParams.get('workflow');
+    if (incomingWorkflow && Array.from(workflow.options).some((option) => option.value === incomingWorkflow)) {
+      workflow.value = incomingWorkflow;
+    }
+
+    workflow.addEventListener('change', render);
+
+    whatsappButton.addEventListener('click', () => {
+      render();
+      openWhatsapp(whatsappButton.dataset.message);
+    });
+
+    copyButton.addEventListener('click', async () => {
+      const url = copyButton.dataset.shareUrl;
+      let copied = false;
+
+      try {
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(url);
+          copied = true;
+        }
+      } catch {
+        copied = false;
+      }
+
+      if (!copied) {
+        const temporary = document.createElement('textarea');
+        temporary.value = url;
+        temporary.setAttribute('readonly', '');
+        temporary.style.position = 'fixed';
+        temporary.style.opacity = '0';
+        document.body.appendChild(temporary);
+        temporary.select();
+        copied = document.execCommand('copy');
+        temporary.remove();
+      }
+
+      copyStatus.textContent = copied ? 'Share link copied.' : 'Copy failed. Select the address from your browser instead.';
+      setTimeout(() => { copyStatus.textContent = ''; }, 3500);
+    });
+
+    render();
+  };
+
+  initRecruitmentRoiCalculator();
+
+  /* ----------------------------------------------------------
      5. SMOOTH SCROLL FOR ANCHOR LINKS
      ---------------------------------------------------------- */
   const initSmoothScroll = () => {
@@ -360,6 +570,40 @@ document.addEventListener('DOMContentLoaded', () => {
       if (title) title.textContent = offerCopy.title;
       if (intro) intro.textContent = offerCopy.intro;
       if (submit) submit.textContent = offerCopy.submit;
+    }
+
+    const estimateHours = pageParams.get('estimate_hours');
+    const estimateValue = pageParams.get('estimate_value');
+    const estimateWorkflow = pageParams.get('workflow');
+    const workflowLabels = {
+      'candidate-intake': 'Candidate intake',
+      'candidate-follow-up': 'Candidate follow-up',
+      'weekly-reporting': 'Weekly reporting',
+      'job-description-preparation': 'Job-description preparation',
+    };
+    const contactMessage = form.querySelector('#contactMessage');
+
+    if (contactMessage && estimateHours && estimateValue && estimateWorkflow) {
+      const recruiters = pageParams.get('recruiters');
+      const adminHours = pageParams.get('admin_hours');
+      const hourlyCost = pageParams.get('cost');
+      const addressableShare = pageParams.get('share');
+      const workflowLabel = workflowLabels[estimateWorkflow] || estimateWorkflow;
+      const formattedValue = Number(estimateValue).toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0,
+      });
+
+      contactMessage.value = [
+        `I modelled ${workflowLabel.toLowerCase()} in the CodeSimplr ROI calculator.`,
+        recruiters ? `Team: ${recruiters} recruiters.` : '',
+        adminHours ? `Current admin time: ${adminHours} hours per recruiter / week.` : '',
+        hourlyCost ? `Loaded hourly cost: $${hourlyCost}.` : '',
+        addressableShare ? `Addressable share: ${addressableShare}%.` : '',
+        `Planning estimate: ${Number(estimateHours).toLocaleString('en-US')} hours returned and ${formattedValue} in capacity value per month.`,
+        'Please validate these assumptions against our real workflow and recommend the best first pilot.',
+      ].filter(Boolean).join('\n');
     }
 
     /* — helpers — */

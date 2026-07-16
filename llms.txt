@@ -18,6 +18,7 @@ CodeSimplr builds AI automation, workflow automation, conversion-focused website
 - Website design and SEO: https://codesimplr.com/website-design-seo
 - n8n workflow automation: https://codesimplr.com/n8n-workflow-automation
 - Recruitment automation: https://codesimplr.com/recruitment-automation
+- Recruitment automation ROI calculator: https://codesimplr.com/recruitment-automation-roi-calculator
 - Recruitment automation workflow guide: https://codesimplr.com/blog/recruitment-automation-workflows-staffing-agencies
 - Blog: https://codesimplr.com/blog
 - USA services: https://codesimplr.com/usa
