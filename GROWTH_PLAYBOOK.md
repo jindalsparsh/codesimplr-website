@@ -27,10 +27,12 @@ A sale is counted only when a paid engagement is accepted and payment has been r
 
 Campaign links:
 
-- Email: `https://codesimplr.com/recruitment-automation?utm_source=cold_email&utm_medium=outreach&utm_campaign=recruitment_automation`
-- LinkedIn: `https://codesimplr.com/recruitment-automation?utm_source=linkedin&utm_medium=social&utm_campaign=recruitment_automation`
-- Partner/referral: `https://codesimplr.com/recruitment-automation?utm_source=partner&utm_medium=referral&utm_campaign=recruitment_automation`
-- Organic social: `https://codesimplr.com/recruitment-automation?utm_source=linkedin&utm_medium=organic_social&utm_campaign=recruitment_automation`
+- Email: `https://codesimplr.com/recruitment-automation-readiness-assessment?utm_source=cold_email&utm_medium=outreach&utm_campaign=recruitment-readiness-assessment`
+- LinkedIn: `https://codesimplr.com/recruitment-automation-readiness-assessment?utm_source=linkedin&utm_medium=social&utm_campaign=recruitment-readiness-assessment`
+- Partner/referral: `https://codesimplr.com/recruitment-automation-readiness-assessment?utm_source=partner&utm_medium=referral&utm_campaign=recruitment-readiness-assessment`
+- Organic social: `https://codesimplr.com/recruitment-automation-readiness-assessment?utm_source=linkedin&utm_medium=organic_social&utm_campaign=recruitment-readiness-assessment`
+
+Use the broader `https://codesimplr.com/recruitment-automation` page as supporting proof when a prospect wants more context. The assessment is the primary campaign destination because it records the workflow state, returns a recommendation, and leads directly into a review request.
 
 ## Research checklist
 

@@ -2,10 +2,11 @@
 
 ## Current audit findings
 
-- The connected Vercel account available to Codex has no projects.
-- The GitHub repo homepage was set to `https://codesimplr-website.vercel.app`, but that URL returned 404 during the audit.
-- Because no reachable Vercel project/analytics dashboard was available, live visitor counts could not be read yet.
-- The site now includes first-party tracking through `/api/events` and a protected admin dashboard at `/admin.html`.
+- The production Vercel project is `codesimplr-website`, with `https://codesimplr.com` attached to the production deployment.
+- Vercel Web Analytics is installed across the site and is the current traffic-measurement fallback.
+- First-party tracking through `/api/events`, lead capture through `/api/signups`, and the protected dashboard at `/admin.html` are implemented.
+- `DATABASE_URL` is not configured. Vercel recorded 15 failed `/api/events` storage writes from three users on July 16, 2026, so first-party events and lead records are not durable yet.
+- The recruitment-readiness result now captures name, agency, business email, score, recommendation, and campaign attribution before opening a prefilled WhatsApp review request. WhatsApp remains usable when database storage fails.
 
 ## What to measure first
 
@@ -28,24 +29,24 @@ Track these every week:
 
 ## Where to see the data
 
-1. Import or open the CodeSimplr project in Vercel.
-2. Connect Neon Postgres.
-3. Add `DATABASE_URL` and `SIGNUPS_ADMIN_TOKEN`.
-4. Redeploy.
-5. Open `https://your-domain/admin.html`.
-6. Enter your website URL and admin token.
+1. Open the `codesimplr-website` project in Vercel.
+2. Connect Neon Postgres through Vercel Marketplace so `DATABASE_URL` is provisioned for the project.
+3. Add a strong `SIGNUPS_ADMIN_TOKEN` to Production, Preview, and Development.
+4. Redeploy the project.
+5. Open `https://codesimplr.com/admin.html`.
+6. Enter `https://codesimplr.com` and the admin token.
 
 The database tables are:
 
 - `website_signups`: people who contacted you or subscribed.
 - `website_events`: page views, CTA clicks, and form-submit events.
 
-For Vercel's own visitor panels, enable Web Analytics in the Vercel project sidebar and redeploy.
+Vercel Web Analytics is already deployed. Use its project panel for traffic trends until first-party storage is connected.
 
 ## How to increase sales
 
-1. Push visitors to one primary action: `Get a Free 3-Point Audit`.
-2. Start with recruitment and staffing agencies and direct relevant traffic to `/recruitment-automation`.
+1. Push cold and social traffic to the recruitment-readiness assessment, then use the result review as the primary lead action.
+2. Start with recruitment and staffing agencies and direct relevant traffic to `/recruitment-automation-readiness-assessment` using channel-specific UTM parameters.
 3. Follow the qualification, email, LinkedIn, referral, and organic-social sequences in `GROWTH_PLAYBOOK.md`.
 4. Use the exact campaign links in that playbook so attribution survives the landing-page-to-contact journey.
 5. Review the admin dashboard weekly:
