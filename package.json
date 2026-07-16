@@ -6,6 +6,10 @@
   "engines": {
     "node": ">=20"
   },
+  "scripts": {
+    "indexnow": "node scripts/submit-indexnow.mjs",
+    "indexnow:dry": "node scripts/submit-indexnow.mjs --dry-run"
+  },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2"
   }
