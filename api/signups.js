@@ -159,6 +159,10 @@ async function handleRequest(request) {
         return json({ error: 'A valid email address is required.' }, 400);
       }
 
+      if (!process.env.DATABASE_URL) {
+        return json({ ok: true, stored: false }, 202);
+      }
+
       const signup = {
         source,
         email,
@@ -220,7 +224,7 @@ async function handleRequest(request) {
         RETURNING id, created_at
       `;
 
-      return json({ ok: true, id: row.id, createdAt: row.created_at }, 201);
+      return json({ ok: true, stored: true, id: row.id, createdAt: row.created_at }, 201);
     }
 
     if (request.method === 'PATCH') {

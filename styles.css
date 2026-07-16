@@ -3153,9 +3153,57 @@ input, textarea, select {
   margin-top: 0.9rem;
 }
 
-.readiness-copy {
-  display: block;
-  margin-top: 0.75rem;
+.readiness-share {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.readiness-share h3 {
+  color: var(--clr-text-primary);
+  font-size: 0.96rem;
+}
+
+.readiness-share > p:not(.readiness-copy-status) {
+  margin-top: 0.35rem;
+  color: var(--clr-text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.55;
+}
+
+.readiness-share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 0.8rem;
+}
+
+.readiness-share-actions a,
+.readiness-share-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0.5rem 0.8rem;
+  color: var(--clr-text-primary);
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-xs);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.readiness-share-actions a:hover,
+.readiness-share-actions button:hover {
+  color: var(--clr-lime);
+  background: rgba(196, 216, 46, 0.045);
+  border-color: var(--clr-lime);
+}
+
+.readiness-share-actions .readiness-copy {
+  margin: 0;
 }
 
 .readiness-copy-status {
@@ -3919,6 +3967,10 @@ input, textarea, select {
 
   .readiness-lead-email {
     grid-column: auto;
+  }
+
+  .readiness-share-actions > * {
+    flex: 1 1 calc(50% - 0.55rem);
   }
 
   .tab-btn {

@@ -9,7 +9,18 @@ const json = (response, status = 200) =>
     },
   });
 
-const EVENT_TYPES = new Set(['page_view', 'cta_click', 'form_submit']);
+const EVENT_TYPES = new Set([
+  'page_view',
+  'cta_click',
+  'form_submit',
+  'roi_estimate_action',
+  'assessment_answer',
+  'assessment_complete',
+  'assessment_result_view',
+  'assessment_retake',
+  'assessment_conversion_action',
+  'assessment_share',
+]);
 const MAX_FIELD_LENGTH = 1000;
 const MAX_EVENTS_EXPORT = 1000;
 
@@ -66,7 +77,7 @@ const ensureTable = async (sql) => {
     CREATE TABLE IF NOT EXISTS website_events (
       id BIGSERIAL PRIMARY KEY,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-      event_type TEXT NOT NULL CHECK (event_type IN ('page_view', 'cta_click', 'form_submit')),
+      event_type TEXT NOT NULL,
       visitor_id TEXT,
       session_id TEXT,
       path TEXT,
@@ -81,6 +92,11 @@ const ensureTable = async (sql) => {
       user_agent TEXT,
       metadata JSONB NOT NULL DEFAULT '{}'::jsonb
     )
+  `;
+
+  await sql`
+    ALTER TABLE website_events
+    DROP CONSTRAINT IF EXISTS website_events_event_type_check
   `;
 
   await sql`
@@ -158,6 +174,10 @@ const topRows = async (sql, field, days) => {
 async function handleRequest(request) {
   try {
     if (request.method === 'POST') {
+      if (!process.env.DATABASE_URL) {
+        return json({ ok: true, stored: false }, 202);
+      }
+
       const sql = getSql();
       await ensureTable(sql);
 
@@ -200,7 +220,7 @@ async function handleRequest(request) {
         )
       `;
 
-      return json({ ok: true }, 201);
+      return json({ ok: true, stored: true }, 201);
     }
 
     if (request.method === 'GET') {

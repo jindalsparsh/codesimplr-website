@@ -3,9 +3,11 @@
 The website now stores two kinds of backend data through Vercel Functions:
 
 - `/api/signups` stores contact-form leads and newsletter signups in `website_signups`, including source, interests, offer, funnel stage, campaign attribution, and pipeline status.
-- `/api/events` stores first-party traffic events in `website_events`, including page views, CTA clicks, and form submits.
+- `/api/events` stores first-party traffic events in `website_events`, including page views, CTA clicks, form submissions, readiness-assessment activity, and result shares.
 
 Both tables live in the same Neon Postgres database connected to your Vercel project.
+
+Until `DATABASE_URL` is configured, valid POST requests return HTTP `202` with `{"ok":true,"stored":false}`. The website treats that as a storage-disabled fallback and continues to WhatsApp; it never tells the visitor that an unsaved lead was stored.
 
 ## 1. Import or open the Vercel project
 

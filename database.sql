@@ -29,7 +29,7 @@ ON website_signups (LOWER(email));
 CREATE TABLE IF NOT EXISTS website_events (
   id BIGSERIAL PRIMARY KEY,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  event_type TEXT NOT NULL CHECK (event_type IN ('page_view', 'cta_click', 'form_submit')),
+  event_type TEXT NOT NULL,
   visitor_id TEXT,
   session_id TEXT,
   path TEXT,
@@ -44,6 +44,9 @@ CREATE TABLE IF NOT EXISTS website_events (
   user_agent TEXT,
   metadata JSONB NOT NULL DEFAULT '{}'::jsonb
 );
+
+ALTER TABLE website_events
+DROP CONSTRAINT IF EXISTS website_events_event_type_check;
 
 CREATE INDEX IF NOT EXISTS website_events_created_at_idx
 ON website_events (created_at DESC);

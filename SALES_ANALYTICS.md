@@ -5,8 +5,9 @@
 - The production Vercel project is `codesimplr-website`, with `https://codesimplr.com` attached to the production deployment.
 - Vercel Web Analytics is installed across the site and is the current traffic-measurement fallback.
 - First-party tracking through `/api/events`, lead capture through `/api/signups`, and the protected dashboard at `/admin.html` are implemented.
-- `DATABASE_URL` is not configured. Vercel recorded 15 failed `/api/events` storage writes from three users on July 16, 2026, so first-party events and lead records are not durable yet.
+- `DATABASE_URL` is not configured. The APIs acknowledge storage-disabled submissions without generating server errors, but first-party events and lead records are still not durable. Vercel Web Analytics remains the traffic-measurement fallback.
 - The recruitment-readiness result now captures name, agency, business email, score, recommendation, and campaign attribution before opening a prefilled WhatsApp review request. WhatsApp remains usable when database storage fails.
+- The readiness result can be shared through LinkedIn, X, email, WhatsApp, or a copied channel-attributed link. Shared links deliberately omit the sender's assessment answers.
 
 ## What to measure first
 
@@ -39,7 +40,7 @@ Track these every week:
 The database tables are:
 
 - `website_signups`: people who contacted you or subscribed.
-- `website_events`: page views, CTA clicks, and form-submit events.
+- `website_events`: page views, CTA clicks, form submissions, readiness-funnel events, and result shares.
 
 Vercel Web Analytics is already deployed. Use its project panel for traffic trends until first-party storage is connected.
 

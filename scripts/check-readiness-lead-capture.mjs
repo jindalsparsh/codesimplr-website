@@ -19,6 +19,12 @@ const requiredIds = [
   'readinessLeadCompany',
   'readinessLeadEmail',
   'readinessLeadStatus',
+  'readinessShareLinkedIn',
+  'readinessShareX',
+  'readinessShareEmail',
+  'readinessShareWhatsapp',
+  'readinessCopy',
+  'readinessCopyStatus',
 ];
 
 for (const id of requiredIds) {
@@ -34,6 +40,7 @@ assert.match(inputTag('readinessLeadEmail'), /\brequired\b/, 'Business email mus
 assert.match(html, /id="readinessLeadStatus"[^>]*role="status"[^>]*aria-live="polite"/, 'Status must announce updates');
 assert.match(html, /name="website"[^>]*class="honeypot"/, 'The bot-trap field must remain present');
 assert.doesNotMatch(html, /id="readinessWhatsapp"/, 'The anonymous result CTA must not compete with lead capture');
+assert.match(html, /without sharing your answers/, 'The share surface must explain that answers are excluded');
 
 for (const token of [
   "offer: 'recruitment-readiness-review'",
@@ -42,6 +49,11 @@ for (const token of [
   'openWhatsapp(message)',
   'Business email:',
   'Campaign source:',
+  "buildShareUrl('linkedin', 'social')",
+  "buildShareUrl('x', 'social')",
+  "buildShareUrl('email', 'email')",
+  "buildShareUrl('whatsapp', 'messaging')",
+  "trackEvent('assessment_share'",
 ]) {
   assert.ok(script.includes(token), `Missing lead-flow behavior: ${token}`);
 }
@@ -52,6 +64,8 @@ for (const selector of [
   '.readiness-lead-field input:focus',
   '.readiness-lead-submit',
   '.readiness-lead-status',
+  '.readiness-share-actions',
+  '.readiness-share-actions a:hover',
 ]) {
   assert.ok(styles.includes(selector), `Missing lead-capture style: ${selector}`);
 }
