@@ -979,6 +979,33 @@ input, textarea, select {
   gap: 0.4rem;
 }
 
+.card-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+  margin-top: 1.25rem;
+}
+
+.bento-card .card-actions .project-card-link {
+  margin-top: 0;
+}
+
+.card-secondary-link {
+  color: var(--clr-text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.22);
+  text-underline-offset: 0.25rem;
+  transition: color var(--transition-fast), text-decoration-color var(--transition-fast);
+}
+
+.card-secondary-link:hover {
+  color: var(--clr-text-primary);
+  text-decoration-color: currentColor;
+}
+
 .tag {
   display: inline-block;
   font-size: 0.7rem;
