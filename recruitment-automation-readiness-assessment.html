@@ -161,7 +161,30 @@
                             <ul id="readinessMeasures"></ul>
                         </div>
 
-                        <button type="button" class="btn btn-primary readiness-whatsapp" id="readinessWhatsapp" data-track="readiness_whatsapp_result">Send My Result on WhatsApp</button>
+                        <form class="readiness-lead-form" id="readinessLeadForm" novalidate>
+                            <input type="text" name="website" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+                            <div class="readiness-lead-heading">
+                                <h3>Review this result with CodeSimplr</h3>
+                                <p>Add your business details. We will package your score and recommended workflow into a WhatsApp review request.</p>
+                            </div>
+                            <div class="readiness-lead-grid">
+                                <div class="readiness-lead-field">
+                                    <label for="readinessLeadName">Name</label>
+                                    <input type="text" id="readinessLeadName" name="name" autocomplete="name" required>
+                                </div>
+                                <div class="readiness-lead-field">
+                                    <label for="readinessLeadCompany">Agency</label>
+                                    <input type="text" id="readinessLeadCompany" name="company" autocomplete="organization">
+                                </div>
+                                <div class="readiness-lead-field readiness-lead-email">
+                                    <label for="readinessLeadEmail">Business email</label>
+                                    <input type="email" id="readinessLeadEmail" name="email" autocomplete="email" inputmode="email" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary readiness-lead-submit" data-track="readiness_review_request">Request My Free Workflow Review</button>
+                            <p class="readiness-lead-note">No mailing-list opt-in. WhatsApp opens with your details so you can review and send the request.</p>
+                            <p class="readiness-lead-status" id="readinessLeadStatus" role="status" aria-live="polite"></p>
+                        </form>
                         <a href="contact.html?offer=recruitment-automation-audit&amp;stage=readiness-assessment" class="readiness-text-link" id="readinessAuditLink" data-track="readiness_audit_result">Get a Free Workflow Audit <span aria-hidden="true">&rarr;</span></a>
                         <button type="button" class="readiness-copy" id="readinessCopy" data-track="readiness_copy_share">Copy share link</button>
                         <p class="readiness-copy-status" id="readinessCopyStatus" role="status"></p>

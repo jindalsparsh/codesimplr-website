@@ -8,7 +8,8 @@
   },
   "scripts": {
     "indexnow": "node scripts/submit-indexnow.mjs",
-    "indexnow:dry": "node scripts/submit-indexnow.mjs --dry-run"
+    "indexnow:dry": "node scripts/submit-indexnow.mjs --dry-run",
+    "test:readiness-lead": "node scripts/check-readiness-lead-capture.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2"
