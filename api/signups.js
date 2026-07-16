@@ -317,6 +317,7 @@ async function handleRequest(request) {
 
     return json({ error: 'Method not allowed.' }, 405);
   } catch (error) {
+    console.error('Website signup storage error:', error instanceof Error ? error.message : error);
     const message =
       process.env.NODE_ENV === 'development'
         ? error.message
