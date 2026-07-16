@@ -9,6 +9,7 @@ CodeSimplr builds AI automation, workflow automation, conversion-focused website
 - Website Design & SEO: service pages, country pages, lead forms, blog structure, structured data, and analytics.
 - n8n Workflow Automation: forms, webhooks, CRM updates, spreadsheets, email, WhatsApp, reporting, and AI workflow steps.
 - Recruitment Automation: a fixed-scope 14-day pilot for candidate intake, screening support, follow-up, or reporting that keeps recruiters in control.
+- Recruitment automation readiness assessment: a six-question planning tool that recommends a first workflow, human approval point, and pilot measurement plan without promising results.
 
 ## Key Pages
 
@@ -18,6 +19,7 @@ CodeSimplr builds AI automation, workflow automation, conversion-focused website
 - Website design and SEO: https://codesimplr.com/website-design-seo
 - n8n workflow automation: https://codesimplr.com/n8n-workflow-automation
 - Recruitment automation: https://codesimplr.com/recruitment-automation
+- Recruitment automation readiness assessment: https://codesimplr.com/recruitment-automation-readiness-assessment
 - Recruitment automation ROI calculator: https://codesimplr.com/recruitment-automation-roi-calculator
 - Recruitment automation workflow guide: https://codesimplr.com/blog/recruitment-automation-workflows-staffing-agencies
 - Blog: https://codesimplr.com/blog
