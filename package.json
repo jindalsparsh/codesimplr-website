@@ -9,7 +9,8 @@
   "scripts": {
     "indexnow": "node scripts/submit-indexnow.mjs",
     "indexnow:dry": "node scripts/submit-indexnow.mjs --dry-run",
-    "test:readiness-lead": "node scripts/check-readiness-lead-capture.mjs"
+    "test:readiness-lead": "node scripts/check-readiness-lead-capture.mjs",
+    "test:storage-fallback": "node scripts/check-storage-fallback.mjs"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2"

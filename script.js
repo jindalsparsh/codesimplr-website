@@ -63,7 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
         referrer: document.referrer || '',
       }),
     })
-      .then((response) => response.ok)
+      .then(async (response) => {
+        if (!response.ok) return false;
+        const result = await response.json().catch(() => ({}));
+        return result.stored !== false;
+      })
       .catch(() => {
         // Keep WhatsApp as the fallback path if storage is not configured yet.
         return false;
@@ -706,6 +710,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const auditLink = document.getElementById('readinessAuditLink');
     const copyButton = document.getElementById('readinessCopy');
     const copyStatus = document.getElementById('readinessCopyStatus');
+    const shareLinks = {
+      linkedin: document.getElementById('readinessShareLinkedIn'),
+      x: document.getElementById('readinessShareX'),
+      email: document.getElementById('readinessShareEmail'),
+      whatsapp: document.getElementById('readinessShareWhatsapp'),
+    };
     const retakeButton = document.getElementById('readinessRetake');
     const pageParams = new URLSearchParams(window.location.search);
     const answers = Array(questions.length).fill('');
@@ -805,14 +815,31 @@ document.addEventListener('DOMContentLoaded', () => {
       return `contact.html?${params.toString()}`;
     };
 
-    const buildShareUrl = () => {
+    const buildShareUrl = (source = 'assessment-share', medium = 'referral') => {
       const url = new URL(window.location.href);
       url.hash = '';
-      questions.forEach((question, index) => url.searchParams.set(`q${index + 1}`, answers[index]));
-      url.searchParams.set('utm_source', 'assessment-share');
-      url.searchParams.set('utm_medium', 'referral');
+      questions.forEach((question, index) => url.searchParams.delete(`q${index + 1}`));
+      url.searchParams.set('utm_source', source);
+      url.searchParams.set('utm_medium', medium);
       url.searchParams.set('utm_campaign', 'recruitment-readiness-assessment');
       return url.toString();
+    };
+
+    const buildShareMessage = () =>
+      'A free six-question readiness assessment for recruitment agencies: choose one workflow, keep a human approval point, and define a 14-day pilot.';
+
+    const setShareLinks = () => {
+      const message = buildShareMessage();
+      const linkedInUrl = buildShareUrl('linkedin', 'social');
+      const xUrl = buildShareUrl('x', 'social');
+      const emailUrl = buildShareUrl('email', 'email');
+      const whatsappUrl = buildShareUrl('whatsapp', 'messaging');
+
+      shareLinks.linkedin.href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(linkedInUrl)}`;
+      shareLinks.x.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(xUrl)}`;
+      shareLinks.email.href = `mailto:?subject=${encodeURIComponent('Recruitment automation readiness assessment')}&body=${encodeURIComponent(`${message}\n\n${emailUrl}`)}`;
+      shareLinks.whatsapp.href = `https://wa.me/?text=${encodeURIComponent(`${message} ${whatsappUrl}`)}`;
+      copyButton.dataset.shareUrl = buildShareUrl('copy', 'referral');
     };
 
     const buildWhatsappMessage = (result, lead = {}) => {
@@ -872,7 +899,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return item;
       }));
       auditLink.href = buildContactUrl(result);
-      copyButton.dataset.shareUrl = buildShareUrl();
+      setShareLinks();
       syncAnswerQuery();
 
       trackEvent(fromQuery ? 'assessment_result_view' : 'assessment_complete', {
@@ -1004,6 +1031,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     auditLink.addEventListener('click', () => trackConversionAction('audit'));
 
+    Object.entries(shareLinks).forEach(([channel, link]) => {
+      link.addEventListener('click', () => {
+        trackEvent('assessment_share', {
+          source: channel,
+          addressableShare: true,
+        });
+      });
+    });
+
     copyButton.addEventListener('click', async () => {
       const url = copyButton.dataset.shareUrl;
       let copied = false;
@@ -1030,7 +1066,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       copyStatus.textContent = copied ? 'Share link copied.' : 'Copy failed. Select the address from your browser instead.';
-      if (copied) trackConversionAction('copy-share');
+      if (copied) {
+        trackEvent('assessment_share', {
+          source: 'copy',
+          addressableShare: true,
+        });
+      }
       setTimeout(() => { copyStatus.textContent = ''; }, 3500);
     });
 
