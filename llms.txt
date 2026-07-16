@@ -8,7 +8,7 @@ CodeSimplr builds AI automation, workflow automation, conversion-focused website
 - AI Automation Agency: AI agents, lead follow-up automation, support automation, recruiter workflows, and reporting systems.
 - Website Design & SEO: service pages, country pages, lead forms, blog structure, structured data, and analytics.
 - n8n Workflow Automation: forms, webhooks, CRM updates, spreadsheets, email, WhatsApp, reporting, and AI workflow steps.
-- Recruitment Automation: candidate intake, screening support, follow-up, and reporting workflows that keep recruiters in control.
+- Recruitment Automation: a fixed-scope 14-day pilot for candidate intake, screening support, follow-up, or reporting that keeps recruiters in control.
 
 ## Key Pages
 
@@ -18,6 +18,7 @@ CodeSimplr builds AI automation, workflow automation, conversion-focused website
 - Website design and SEO: https://codesimplr.com/website-design-seo
 - n8n workflow automation: https://codesimplr.com/n8n-workflow-automation
 - Recruitment automation: https://codesimplr.com/recruitment-automation
+- Recruitment automation workflow guide: https://codesimplr.com/blog/recruitment-automation-workflows-staffing-agencies
 - Blog: https://codesimplr.com/blog
 - USA services: https://codesimplr.com/usa
 - UK services: https://codesimplr.com/uk
