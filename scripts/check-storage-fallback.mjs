@@ -26,6 +26,7 @@ const eventResponse = await postEvent(new Request('https://codesimplr.test/api/e
     utmSource: 'instagram',
     utmMedium: 'organic_social',
     utmCampaign: 'recruitment_readiness_assessment',
+    utmContent: 'reel_2026_07_22',
     metadata: {
       score: 78,
       readinessLevel: 'ready-with-guardrails',
@@ -57,6 +58,7 @@ const signupResponse = await postSignup(new Request('https://codesimplr.test/api
     utmSource: 'instagram',
     utmMedium: 'organic_social',
     utmCampaign: 'recruitment_readiness_assessment',
+    utmContent: 'reel_2026_07_22',
     landingPage: 'https://codesimplr.test/recruitment-automation-readiness-assessment?email=operator@example.com',
   }),
 }));
@@ -79,6 +81,7 @@ assert.deepEqual(eventLog, {
   utmSource: 'instagram',
   utmMedium: 'organic_social',
   utmCampaign: 'recruitment_readiness_assessment',
+  utmContent: 'reel_2026_07_22',
   country: 'AE',
   metadata: {
     score: 78,
@@ -99,6 +102,7 @@ assert.deepEqual(signupLog, {
   utmSource: 'instagram',
   utmMedium: 'organic_social',
   utmCampaign: 'recruitment_readiness_assessment',
+  utmContent: 'reel_2026_07_22',
   landingPath: '/recruitment-automation-readiness-assessment',
   country: 'AE',
   hasName: true,

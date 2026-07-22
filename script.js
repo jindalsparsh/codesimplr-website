@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
       utmSource: params.get('utm_source') || '',
       utmMedium: params.get('utm_medium') || '',
       utmCampaign: params.get('utm_campaign') || '',
+      utmContent: params.get('utm_content') || '',
     };
 
     try {
@@ -33,10 +34,11 @@ document.addEventListener('DOMContentLoaded', () => {
         utmSource: current.utmSource || saved.utmSource || '',
         utmMedium: current.utmMedium || saved.utmMedium || '',
         utmCampaign: current.utmCampaign || saved.utmCampaign || '',
+        utmContent: current.utmContent || saved.utmContent || '',
         landingPage: saved.landingPage || window.location.href,
       };
 
-      if (current.utmSource || current.utmMedium || current.utmCampaign) {
+      if (current.utmSource || current.utmMedium || current.utmCampaign || current.utmContent) {
         attribution.landingPage = window.location.href;
       }
 
@@ -182,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         utmSource: attribution.utmSource,
         utmMedium: attribution.utmMedium,
         utmCampaign: attribution.utmCampaign,
+        utmContent: attribution.utmContent,
         metadata: {
           pageTitle: document.title,
           viewport: `${window.innerWidth}x${window.innerHeight}`,
@@ -822,6 +825,7 @@ document.addEventListener('DOMContentLoaded', () => {
       url.searchParams.set('utm_source', source);
       url.searchParams.set('utm_medium', medium);
       url.searchParams.set('utm_campaign', 'recruitment-readiness-assessment');
+      url.searchParams.set('utm_content', `${source}-share`);
       return url.toString();
     };
 
@@ -854,7 +858,7 @@ document.addEventListener('DOMContentLoaded', () => {
       `Recommended first workflow: ${result.workflow.title}`,
       `Human approval point: ${result.workflow.approval}`,
       `Pilot measures: ${result.workflow.measures.join(', ')}`,
-      attribution.utmSource ? `Campaign source: ${attribution.utmSource}${attribution.utmMedium ? ` / ${attribution.utmMedium}` : ''}${attribution.utmCampaign ? ` / ${attribution.utmCampaign}` : ''}` : '',
+      attribution.utmSource ? `Campaign source: ${attribution.utmSource}${attribution.utmMedium ? ` / ${attribution.utmMedium}` : ''}${attribution.utmCampaign ? ` / ${attribution.utmCampaign}` : ''}${attribution.utmContent ? ` / ${attribution.utmContent}` : ''}` : '',
       'I would like a free workflow audit to validate this result against our real systems and process.',
       ].filter(Boolean).join('\n');
     };

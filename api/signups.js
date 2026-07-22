@@ -78,6 +78,7 @@ const logSignupFallback = (request, payload, source) => {
     utmSource: cleanText(payload.utmSource, 200),
     utmMedium: cleanText(payload.utmMedium, 200),
     utmCampaign: cleanText(payload.utmCampaign, 200),
+    utmContent: cleanText(payload.utmContent, 200),
     landingPath: cleanPath(payload.landingPage || payload.pageUrl),
     country: cleanText(request.headers.get('x-vercel-ip-country'), 80),
     hasName: Boolean(cleanText(payload.name, 160)),
@@ -103,6 +104,7 @@ const ensureTable = async (sql) => {
       utm_source TEXT,
       utm_medium TEXT,
       utm_campaign TEXT,
+      utm_content TEXT,
       landing_page TEXT,
       message TEXT,
       page_url TEXT,
@@ -118,6 +120,7 @@ const ensureTable = async (sql) => {
   await sql`ALTER TABLE website_signups ADD COLUMN IF NOT EXISTS utm_source TEXT`;
   await sql`ALTER TABLE website_signups ADD COLUMN IF NOT EXISTS utm_medium TEXT`;
   await sql`ALTER TABLE website_signups ADD COLUMN IF NOT EXISTS utm_campaign TEXT`;
+  await sql`ALTER TABLE website_signups ADD COLUMN IF NOT EXISTS utm_content TEXT`;
   await sql`ALTER TABLE website_signups ADD COLUMN IF NOT EXISTS landing_page TEXT`;
 
   await sql`
@@ -155,6 +158,7 @@ const toCsv = (rows) => {
     'utm_source',
     'utm_medium',
     'utm_campaign',
+    'utm_content',
     'landing_page',
     'message',
     'page_url',
@@ -206,6 +210,7 @@ async function handleRequest(request) {
         utmSource: cleanText(payload.utmSource, 200),
         utmMedium: cleanText(payload.utmMedium, 200),
         utmCampaign: cleanText(payload.utmCampaign, 200),
+        utmContent: cleanText(payload.utmContent, 200),
         landingPage: cleanText(payload.landingPage, 600),
         message: cleanText(payload.message, 2000),
         pageUrl: cleanText(payload.pageUrl, 600),
@@ -229,6 +234,7 @@ async function handleRequest(request) {
           utm_source,
           utm_medium,
           utm_campaign,
+          utm_content,
           landing_page,
           message,
           page_url,
@@ -247,6 +253,7 @@ async function handleRequest(request) {
           ${signup.utmSource},
           ${signup.utmMedium},
           ${signup.utmCampaign},
+          ${signup.utmContent},
           ${signup.landingPage},
           ${signup.message},
           ${signup.pageUrl},
@@ -319,6 +326,7 @@ async function handleRequest(request) {
           utm_source,
           utm_medium,
           utm_campaign,
+          utm_content,
           landing_page,
           message,
           page_url,
