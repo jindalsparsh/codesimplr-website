@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.addEventListener('click', (event) => {
     if (!(event.target instanceof Element)) return;
-    const trackedLink = event.target.closest('[data-track], a[href*="wa.me"], a[href="contact.html"]');
+    const trackedLink = event.target.closest('[data-track], a[href*="wa.me"], a[href="/contact"], a[href^="/contact?"]');
     if (!trackedLink) return;
 
     trackEvent('cta_click', {
@@ -439,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
         estimate_hours: String(Math.round(model.returnedHours)),
         estimate_value: String(Math.round(model.monthlyCapacityValue)),
       });
-      return `contact.html?${params.toString()}`;
+      return `/contact?${params.toString()}`;
     };
 
     const buildShareUrl = (model) => {
@@ -812,7 +812,7 @@ document.addEventListener('DOMContentLoaded', () => {
         approval_point: result.workflow.approval,
         measures: result.workflow.measures.join('|'),
       });
-      return `contact.html?${params.toString()}`;
+      return `/contact?${params.toString()}`;
     };
 
     const buildShareUrl = (source = 'assessment-share', medium = 'referral') => {

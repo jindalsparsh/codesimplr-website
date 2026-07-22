@@ -1,36 +1,43 @@
 User-agent: OAI-SearchBot
 Allow: /
+Disallow: /admin
 Disallow: /admin.html
 Disallow: /api/
 
 User-agent: ChatGPT-User
 Allow: /
+Disallow: /admin
 Disallow: /admin.html
 Disallow: /api/
 
 User-agent: GPTBot
 Allow: /
+Disallow: /admin
 Disallow: /admin.html
 Disallow: /api/
 
 User-agent: Claude-SearchBot
 Allow: /
+Disallow: /admin
 Disallow: /admin.html
 Disallow: /api/
 
 User-agent: Claude-User
 Allow: /
+Disallow: /admin
 Disallow: /admin.html
 Disallow: /api/
 
 User-agent: ClaudeBot
 Allow: /
+Disallow: /admin
 Disallow: /admin.html
 Disallow: /api/
 Crawl-delay: 1
 
 User-agent: *
 Allow: /
+Disallow: /admin
 Disallow: /admin.html
 Disallow: /api/
 
