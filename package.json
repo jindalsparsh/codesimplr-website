@@ -12,6 +12,7 @@
     "test:canonical-links": "node scripts/check-canonical-internal-links.mjs",
     "test:attribution": "node scripts/check-account-attribution.mjs",
     "test:homepage-entry": "node scripts/check-homepage-readiness-entry.mjs",
+    "test:lead-notification": "node scripts/check-lead-notification.mjs",
     "test:readiness-lead": "node scripts/check-readiness-lead-capture.mjs",
     "test:storage-fallback": "node scripts/check-storage-fallback.mjs"
   },
