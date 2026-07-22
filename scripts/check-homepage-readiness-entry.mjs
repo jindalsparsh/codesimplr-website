@@ -10,11 +10,11 @@ const recruitmentCard = html.match(/<h3 class="card-title">Recruitment Workflow 
 assert.ok(recruitmentCard, 'Recruitment workflow card was not found');
 assert.match(
   recruitmentCard,
-  /href="recruitment-automation-readiness-assessment\.html\?utm_source=homepage&amp;utm_medium=internal&amp;utm_campaign=recruitment-readiness-assessment"/,
+  /href="\/recruitment-automation-readiness-assessment\?utm_source=homepage&amp;utm_medium=internal&amp;utm_campaign=recruitment-readiness-assessment"/,
   'Homepage readiness link must preserve channel attribution',
 );
 assert.match(recruitmentCard, /data-track="service_recruitment_readiness"/, 'Readiness entry must have a dedicated event label');
-assert.match(recruitmentCard, /href="recruitment-automation\.html"/, 'Recruitment service details must remain available');
+assert.match(recruitmentCard, /href="\/recruitment-automation"/, 'Recruitment service details must remain available');
 assert.match(recruitmentCard, /class="card-actions"/, 'Recruitment card actions must share one responsive action group');
 
 for (const selector of ['.card-actions', '.bento-card .card-actions .project-card-link', '.card-secondary-link:hover']) {

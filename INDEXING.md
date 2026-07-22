@@ -2,7 +2,9 @@
 
 ## Current state
 
-As of 16 July 2026, `site:codesimplr.com` returned no visible search results. The public site, robots file, canonical tags, structured data, internal links, and XML sitemap are live, but discovery and indexing still need to be monitored through search-engine webmaster tools.
+As of 22 July 2026, `site:codesimplr.com` returned no visible search results. The public site, robots file, canonical tags, structured data, internal links, and XML sitemap are live, but discovery and indexing still need to be monitored through search-engine webmaster tools.
+
+All first-party navigation now links directly to the extensionless URLs that Vercel serves under `cleanUrls: true`. This avoids sending users and crawlers through avoidable `.html` redirects. Run `npm run test:canonical-links` before deployment to catch extension-bearing links, relative internal links, missing route targets, or an exposed clean admin route in `robots.txt`.
 
 ## IndexNow
 
