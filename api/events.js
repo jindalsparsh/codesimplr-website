@@ -110,6 +110,7 @@ const logEventFallback = (request, payload, eventType, url) => {
     utmSource: cleanText(payload.utmSource, 200),
     utmMedium: cleanText(payload.utmMedium, 200),
     utmCampaign: cleanText(payload.utmCampaign, 200),
+    utmContent: cleanText(payload.utmContent, 200),
     country: cleanText(request.headers.get('x-vercel-ip-country'), 80),
     metadata: cleanFallbackMetadata(payload.metadata),
   }));
@@ -137,6 +138,7 @@ const ensureTable = async (sql) => {
       utm_source TEXT,
       utm_medium TEXT,
       utm_campaign TEXT,
+      utm_content TEXT,
       country TEXT,
       region TEXT,
       city TEXT,
@@ -144,6 +146,8 @@ const ensureTable = async (sql) => {
       metadata JSONB NOT NULL DEFAULT '{}'::jsonb
     )
   `;
+
+  await sql`ALTER TABLE website_events ADD COLUMN IF NOT EXISTS utm_content TEXT`;
 
   await sql`
     ALTER TABLE website_events
@@ -219,6 +223,19 @@ const topRows = async (sql, field, days) => {
     `;
   }
 
+  if (field === 'utm_content') {
+    return sql`
+      SELECT utm_content AS label, COUNT(*)::int AS count
+      FROM website_events
+      WHERE created_at >= NOW() - (${days} || ' days')::interval
+        AND utm_content IS NOT NULL
+        AND utm_content <> ''
+      GROUP BY utm_content
+      ORDER BY count DESC
+      LIMIT 8
+    `;
+  }
+
   return [];
 };
 
@@ -248,6 +265,7 @@ async function handleRequest(request) {
           utm_source,
           utm_medium,
           utm_campaign,
+          utm_content,
           country,
           region,
           city,
@@ -264,6 +282,7 @@ async function handleRequest(request) {
           ${cleanText(payload.utmSource, 200)},
           ${cleanText(payload.utmMedium, 200)},
           ${cleanText(payload.utmCampaign, 200)},
+          ${cleanText(payload.utmContent, 200)},
           ${cleanText(request.headers.get('x-vercel-ip-country'), 80)},
           ${cleanText(request.headers.get('x-vercel-ip-country-region'), 120)},
           ${cleanText(request.headers.get('x-vercel-ip-city'), 160)},
@@ -310,6 +329,7 @@ async function handleRequest(request) {
           utm_source,
           utm_medium,
           utm_campaign,
+          utm_content,
           country,
           metadata
         FROM website_events
@@ -318,11 +338,12 @@ async function handleRequest(request) {
         LIMIT ${limit}
       `;
 
-      const [topPages, topReferrers, topCountries, topUtmSources] = await Promise.all([
+      const [topPages, topReferrers, topCountries, topUtmSources, topUtmContents] = await Promise.all([
         topRows(sql, 'path', days),
         topRows(sql, 'referrer', days),
         topRows(sql, 'country', days),
         topRows(sql, 'utm_source', days),
+        topRows(sql, 'utm_content', days),
       ]);
 
       return json({
@@ -333,6 +354,7 @@ async function handleRequest(request) {
         topReferrers,
         topCountries,
         topUtmSources,
+        topUtmContents,
         events,
       });
     }
