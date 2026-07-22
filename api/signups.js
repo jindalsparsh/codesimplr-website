@@ -55,6 +55,37 @@ const cleanInterests = (value) => {
     .slice(0, 12);
 };
 
+const cleanPath = (value) => {
+  try {
+    return value ? cleanText(new URL(value).pathname, 500) : null;
+  } catch {
+    return typeof value === 'string' && value.startsWith('/')
+      ? cleanText(value.split(/[?#]/, 1)[0], 500)
+      : null;
+  }
+};
+
+const logSignupFallback = (request, payload, source) => {
+  console.info(JSON.stringify({
+    level: 'info',
+    msg: 'website_signup_attempt',
+    storage: 'vercel-log-fallback',
+    route: '/api/signups',
+    source,
+    offer: cleanText(payload.offer, 160),
+    funnelStage: cleanText(payload.funnelStage, 120),
+    interests: cleanInterests(payload.interests),
+    utmSource: cleanText(payload.utmSource, 200),
+    utmMedium: cleanText(payload.utmMedium, 200),
+    utmCampaign: cleanText(payload.utmCampaign, 200),
+    landingPath: cleanPath(payload.landingPage || payload.pageUrl),
+    country: cleanText(request.headers.get('x-vercel-ip-country'), 80),
+    hasName: Boolean(cleanText(payload.name, 160)),
+    hasCompany: Boolean(cleanText(payload.company, 200)),
+    hasMessage: Boolean(cleanText(payload.message, 2000)),
+  }));
+};
+
 const ensureTable = async (sql) => {
   await sql`
     CREATE TABLE IF NOT EXISTS website_signups (
@@ -160,6 +191,7 @@ async function handleRequest(request) {
       }
 
       if (!process.env.DATABASE_URL) {
+        logSignupFallback(request, payload, source);
         return json({ ok: true, stored: false }, 202);
       }
 
