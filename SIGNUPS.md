@@ -1,13 +1,13 @@
 # CodeSimplr Backend: Signups, Database, and Analytics
 
-The website now stores two kinds of backend data through Vercel Functions:
+The website can store two kinds of backend data through Vercel Functions:
 
 - `/api/signups` stores contact-form leads and newsletter signups in `website_signups`, including source, interests, offer, funnel stage, campaign attribution, and pipeline status.
 - `/api/events` stores first-party traffic events in `website_events`, including page views, CTA clicks, form submissions, readiness-assessment activity, and result shares.
 
-Both tables live in the same Neon Postgres database connected to your Vercel project.
+Both tables use the same Neon Postgres database when it is connected to the Vercel project. Contact and newsletter submissions can also send a fixed-address owner notification through Resend.
 
-Until `DATABASE_URL` is configured, valid POST requests return HTTP `202` with `{"ok":true,"stored":false}`. The website treats that as a storage-disabled fallback and continues to WhatsApp; it never tells the visitor that an unsaved lead was stored.
+The `/api/signups` response reports both delivery paths: `stored` for Neon and `notified` for Resend. If neither path is configured or available, valid requests return HTTP `202` with `{"ok":true,"stored":false,"notified":false}`. The website treats that as a delivery-disabled fallback and continues to WhatsApp; it never tells the visitor that an undelivered lead was saved.
 
 ## 1. Import or open the Vercel project
 
@@ -16,7 +16,7 @@ Until `DATABASE_URL` is configured, valid POST requests return HTTP `202` with `
 3. Deploy the `master` branch.
 4. Open the project, then go to Project Settings.
 
-Important: the connected Vercel account available to Codex currently shows no projects, so the live project may be under a different Vercel account/team. The GitHub repo homepage also pointed to `https://codesimplr-website.vercel.app`, but that URL returned 404 during the audit. Importing the repo into the correct Vercel team fixes that.
+The current production project is `codesimplr-website`, and `codesimplr.com` is attached to its production deployment.
 
 ## 2. Create the database
 
@@ -33,7 +33,24 @@ DATABASE_URL=postgres://...
 
 The API also creates the tables automatically on first request, but running `database.sql` once makes the database visible and explicit.
 
-## 3. Add the admin token
+## 3. Configure owner lead notifications
+
+1. In the Vercel project, open Storage or Integrations.
+2. Add Resend from the Vercel Marketplace.
+3. Verify the sending domain in Resend before using a `@codesimplr.com` sender.
+4. Add these project environment variables for Production and Preview:
+
+```env
+RESEND_API_KEY=re_...
+LEAD_NOTIFICATION_TO=the-owner-inbox@example.com
+LEAD_NOTIFICATION_FROM=CodeSimplr Leads <leads@codesimplr.com>
+```
+
+The recipient is fixed in server configuration; the public request cannot choose where mail is sent. The visitor's validated business email is set as the reply-to address. Each browser submission includes a unique idempotency key so a retry cannot create a duplicate Resend message within its deduplication window.
+
+The database and notification paths are independent. If one fails while the other succeeds, the visitor sees a truthful delivered state and WhatsApp remains available for immediate follow-up.
+
+## 4. Add the admin token
 
 Create a long random token and add it to Vercel project environment variables:
 
@@ -43,7 +60,7 @@ SIGNUPS_ADMIN_TOKEN=replace-with-a-long-random-admin-token
 
 Set it for Production and Preview if you want both environments to work. Redeploy after adding or changing environment variables.
 
-## 4. Where you see the signup database
+## 5. Where you see the signup database
 
 In Vercel:
 
@@ -75,7 +92,7 @@ In the website:
 
 That admin page calls the protected API and shows the lead pipeline, attributed sales progress toward 10, recent signups, unique visitors, page views, CTA clicks, top pages, referrers, and recent events. Change a lead's status from the pipeline table; mark it `won` only after the paid engagement is accepted and payment is received.
 
-## 5. Export signups
+## 6. Export signups
 
 JSON:
 
@@ -92,7 +109,7 @@ curl -H "Authorization: Bearer $SIGNUPS_ADMIN_TOKEN" \
   -o codesimplr-signups.csv
 ```
 
-## 6. View visitor analytics
+## 7. View visitor analytics
 
 The site now has first-party analytics through `/api/events`. For Vercel's built-in dashboard analytics:
 

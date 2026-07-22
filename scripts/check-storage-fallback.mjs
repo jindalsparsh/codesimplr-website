@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict';
 
 delete process.env.DATABASE_URL;
+delete process.env.RESEND_API_KEY;
+delete process.env.LEAD_NOTIFICATION_TO;
+delete process.env.LEAD_NOTIFICATION_FROM;
 
 const [{ POST: postEvent }, { POST: postSignup }] = await Promise.all([
   import('../api/events.js'),
@@ -64,7 +67,7 @@ const signupResponse = await postSignup(new Request('https://codesimplr.test/api
 }));
 
 assert.equal(signupResponse.status, 202, 'Signups should keep the direct fallback usable when storage is unavailable');
-assert.deepEqual(await signupResponse.json(), { ok: true, stored: false });
+assert.deepEqual(await signupResponse.json(), { ok: true, stored: false, notified: false });
 
 console.info = originalConsoleInfo;
 

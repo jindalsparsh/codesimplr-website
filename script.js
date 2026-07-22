@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
       keepalive: true,
       body: JSON.stringify({
         ...payload,
+        submissionId: payload.submissionId || randomId('lead'),
         ...getCampaignAttribution(),
         pageUrl: window.location.href,
         referrer: document.referrer || '',
@@ -68,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(async (response) => {
         if (!response.ok) return false;
         const result = await response.json().catch(() => ({}));
-        return result.stored !== false;
+        return result.stored === true || result.notified === true;
       })
       .catch(() => {
         // Keep WhatsApp as the fallback path if storage is not configured yet.
@@ -1021,7 +1022,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       savePromise.then((saved) => {
         leadStatus.textContent = saved
-          ? 'Request saved. Review the prefilled WhatsApp message and send it to continue.'
+          ? 'Request delivered to CodeSimplr. You can also send the prefilled WhatsApp message to continue.'
           : 'WhatsApp has your request. Review the prefilled message and send it to continue.';
       });
     });
@@ -1386,7 +1387,7 @@ document.addEventListener('DOMContentLoaded', () => {
       savePromise.then((saved) => {
         if (!successText) return;
         successText.textContent = saved
-          ? 'Your project details were saved to CodeSimplr. WhatsApp also opened so you can continue the conversation instantly.'
+          ? 'Your project details reached CodeSimplr. WhatsApp also opened so you can continue the conversation instantly.'
           : 'WhatsApp opened with your project details. Signup storage will start saving records once the Vercel database is connected.';
       });
 
@@ -1413,6 +1414,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!form) return;
 
     const successEl = document.getElementById('newsletterSuccess');
+    const inputGroup = form.querySelector('.newsletter-input-group');
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -1444,19 +1446,19 @@ document.addEventListener('DOMContentLoaded', () => {
       if (successEl) {
         successEl.textContent = 'Saving your email. WhatsApp opened as a direct follow-up channel.';
       }
-      form.style.display = 'none';
+      if (inputGroup) inputGroup.style.display = 'none';
 
       savePromise.then((saved) => {
         if (!successEl) return;
         successEl.textContent = saved
-          ? 'Thanks, your email was saved to the CodeSimplr signup database.'
+          ? 'Thanks, your email reached CodeSimplr.'
           : 'WhatsApp opened with your subscription request. Signup storage will start saving records once the Vercel database is connected.';
       });
 
       // Restore form after a few seconds
       setTimeout(() => {
         form.reset();
-        form.style.display = '';
+        if (inputGroup) inputGroup.style.display = '';
         if (successEl) successEl.style.display = 'none';
       }, 4000);
     });

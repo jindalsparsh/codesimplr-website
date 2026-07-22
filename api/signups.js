@@ -65,6 +65,87 @@ const cleanPath = (value) => {
   }
 };
 
+const cleanSubmissionId = (value) => {
+  const cleaned = cleanText(value, 120)?.replace(/[^a-zA-Z0-9_-]/g, '');
+  return cleaned || `lead_${crypto.randomUUID()}`;
+};
+
+const getNotificationConfig = () => {
+  const apiKey = cleanText(process.env.RESEND_API_KEY, 500);
+  const from = cleanText(process.env.LEAD_NOTIFICATION_FROM, 320);
+  const to = String(process.env.LEAD_NOTIFICATION_TO || '')
+    .split(',')
+    .map((value) => cleanEmail(value))
+    .filter(Boolean)
+    .slice(0, 5);
+
+  return apiKey && from && to.length ? { apiKey, from, to } : null;
+};
+
+const buildNotificationText = (signup, submissionId) => [
+  signup.source === 'contact' ? 'New CodeSimplr website lead' : 'New CodeSimplr newsletter signup',
+  '',
+  `Submission ID: ${submissionId}`,
+  `Source: ${signup.source}`,
+  `Name: ${signup.name || 'Not provided'}`,
+  `Business email: ${signup.email}`,
+  `Company: ${signup.company || 'Not provided'}`,
+  `Interests: ${signup.interests.join(', ') || 'Not provided'}`,
+  `Offer: ${signup.offer || 'Not provided'}`,
+  `Funnel stage: ${signup.funnelStage || 'Not provided'}`,
+  `Campaign: ${[signup.utmSource, signup.utmMedium, signup.utmCampaign, signup.utmContent].filter(Boolean).join(' / ') || 'Direct or unknown'}`,
+  `Landing page: ${signup.landingPage || 'Not provided'}`,
+  `Submission page: ${signup.pageUrl || 'Not provided'}`,
+  '',
+  'Message:',
+  signup.message || 'No message provided.',
+].join('\n');
+
+const notifyLead = async (signup, submissionId) => {
+  const config = getNotificationConfig();
+  if (!config) return { configured: false, sent: false };
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    signal: AbortSignal.timeout(8000),
+    headers: {
+      authorization: `Bearer ${config.apiKey}`,
+      'content-type': 'application/json',
+      'idempotency-key': `codesimplr-${submissionId}`,
+    },
+    body: JSON.stringify({
+      from: config.from,
+      to: config.to,
+      reply_to: signup.email,
+      subject: cleanText(
+        signup.source === 'contact'
+          ? `New CodeSimplr lead${signup.company ? `: ${signup.company}` : ''}`
+          : 'New CodeSimplr newsletter signup',
+        180
+      ),
+      text: buildNotificationText(signup, submissionId),
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Resend returned HTTP ${response.status}.`);
+  }
+
+  const result = await response.json().catch(() => ({}));
+  console.info(JSON.stringify({
+    level: 'info',
+    msg: 'website_signup_delivered',
+    delivery: 'resend',
+    route: '/api/signups',
+    source: signup.source,
+    submissionId,
+    providerId: cleanText(result.id, 160),
+    utmContent: signup.utmContent,
+  }));
+
+  return { configured: true, sent: true };
+};
+
 const logSignupFallback = (request, payload, source) => {
   console.info(JSON.stringify({
     level: 'info',
@@ -194,11 +275,6 @@ async function handleRequest(request) {
         return json({ error: 'A valid email address is required.' }, 400);
       }
 
-      if (!process.env.DATABASE_URL) {
-        logSignupFallback(request, payload, source);
-        return json({ ok: true, stored: false }, 202);
-      }
-
       const signup = {
         source,
         email,
@@ -217,53 +293,79 @@ async function handleRequest(request) {
         referrer: cleanText(payload.referrer, 600),
         userAgent: cleanText(request.headers.get('user-agent'), 600),
       };
+      const submissionId = cleanSubmissionId(payload.submissionId);
+      let row = null;
+      let notified = false;
 
-      const sql = getSql();
-      await ensureTable(sql);
+      if (process.env.DATABASE_URL) {
+        try {
+          const sql = getSql();
+          await ensureTable(sql);
 
-      const [row] = await sql`
-        INSERT INTO website_signups (
-          source,
-          email,
-          name,
-          company,
-          interests,
-          offer,
-          funnel_stage,
-          lead_status,
-          utm_source,
-          utm_medium,
-          utm_campaign,
-          utm_content,
-          landing_page,
-          message,
-          page_url,
-          referrer,
-          user_agent
-        )
-        VALUES (
-          ${signup.source},
-          ${signup.email},
-          ${signup.name},
-          ${signup.company},
-          ${JSON.stringify(signup.interests)}::jsonb,
-          ${signup.offer},
-          ${signup.funnelStage},
-          'new',
-          ${signup.utmSource},
-          ${signup.utmMedium},
-          ${signup.utmCampaign},
-          ${signup.utmContent},
-          ${signup.landingPage},
-          ${signup.message},
-          ${signup.pageUrl},
-          ${signup.referrer},
-          ${signup.userAgent}
-        )
-        RETURNING id, created_at
-      `;
+          [row] = await sql`
+            INSERT INTO website_signups (
+              source,
+              email,
+              name,
+              company,
+              interests,
+              offer,
+              funnel_stage,
+              lead_status,
+              utm_source,
+              utm_medium,
+              utm_campaign,
+              utm_content,
+              landing_page,
+              message,
+              page_url,
+              referrer,
+              user_agent
+            )
+            VALUES (
+              ${signup.source},
+              ${signup.email},
+              ${signup.name},
+              ${signup.company},
+              ${JSON.stringify(signup.interests)}::jsonb,
+              ${signup.offer},
+              ${signup.funnelStage},
+              'new',
+              ${signup.utmSource},
+              ${signup.utmMedium},
+              ${signup.utmCampaign},
+              ${signup.utmContent},
+              ${signup.landingPage},
+              ${signup.message},
+              ${signup.pageUrl},
+              ${signup.referrer},
+              ${signup.userAgent}
+            )
+            RETURNING id, created_at
+          `;
+        } catch (error) {
+          console.warn('Website signup database warning:', error instanceof Error ? error.message : error);
+        }
+      }
 
-      return json({ ok: true, stored: true, id: row.id, createdAt: row.created_at }, 201);
+      try {
+        const notification = await notifyLead(signup, submissionId);
+        notified = notification.sent;
+      } catch (error) {
+        console.warn('Website signup notification warning:', error instanceof Error ? error.message : error);
+      }
+
+      const stored = Boolean(row);
+      if (!stored && !notified) {
+        logSignupFallback(request, payload, source);
+      }
+
+      return json({
+        ok: true,
+        stored,
+        notified,
+        ...(row ? { id: row.id, createdAt: row.created_at } : {}),
+      }, stored ? 201 : 202);
     }
 
     if (request.method === 'PATCH') {
