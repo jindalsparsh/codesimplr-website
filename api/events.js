@@ -64,6 +64,57 @@ const parseUrl = (value) => {
   }
 };
 
+const cleanPath = (value) => {
+  try {
+    return value ? cleanText(new URL(value, 'https://codesimplr.invalid').pathname, 500) : null;
+  } catch {
+    return null;
+  }
+};
+
+const FALLBACK_EVENT_FIELDS = new Set([
+  'action',
+  'addressableShare',
+  'adminHours',
+  'answer',
+  'destination',
+  'estimatedHours',
+  'estimatedValue',
+  'funnelStage',
+  'interests',
+  'label',
+  'offer',
+  'question',
+  'questionNumber',
+  'readinessLevel',
+  'recruiters',
+  'recommendedWorkflow',
+  'score',
+  'source',
+  'workflow',
+]);
+
+const cleanFallbackMetadata = (value) =>
+  Object.fromEntries(
+    Object.entries(cleanMetadata(value)).filter(([key]) => FALLBACK_EVENT_FIELDS.has(key))
+  );
+
+const logEventFallback = (request, payload, eventType, url) => {
+  console.info(JSON.stringify({
+    level: 'info',
+    msg: 'website_event',
+    storage: 'vercel-log-fallback',
+    route: '/api/events',
+    eventType,
+    path: cleanPath(payload.path || url?.pathname),
+    utmSource: cleanText(payload.utmSource, 200),
+    utmMedium: cleanText(payload.utmMedium, 200),
+    utmCampaign: cleanText(payload.utmCampaign, 200),
+    country: cleanText(request.headers.get('x-vercel-ip-country'), 80),
+    metadata: cleanFallbackMetadata(payload.metadata),
+  }));
+};
+
 const isAuthorized = (request) => {
   const token = process.env.SIGNUPS_ADMIN_TOKEN;
   const authHeader = request.headers.get('authorization') || '';
@@ -174,16 +225,17 @@ const topRows = async (sql, field, days) => {
 async function handleRequest(request) {
   try {
     if (request.method === 'POST') {
+      const payload = await request.json().catch(() => ({}));
+      const eventType = EVENT_TYPES.has(payload.eventType) ? payload.eventType : 'page_view';
+      const url = parseUrl(payload.pageUrl);
+
       if (!process.env.DATABASE_URL) {
+        logEventFallback(request, payload, eventType, url);
         return json({ ok: true, stored: false }, 202);
       }
 
       const sql = getSql();
       await ensureTable(sql);
-
-      const payload = await request.json().catch(() => ({}));
-      const eventType = EVENT_TYPES.has(payload.eventType) ? payload.eventType : 'page_view';
-      const url = parseUrl(payload.pageUrl);
 
       await sql`
         INSERT INTO website_events (
@@ -206,7 +258,7 @@ async function handleRequest(request) {
           ${eventType},
           ${cleanText(payload.visitorId, 120)},
           ${cleanText(payload.sessionId, 120)},
-          ${cleanText(payload.path || url?.pathname, 500)},
+          ${cleanPath(payload.path || url?.pathname)},
           ${cleanText(payload.pageUrl, 1000)},
           ${cleanText(payload.referrer, 1000)},
           ${cleanText(payload.utmSource, 200)},
